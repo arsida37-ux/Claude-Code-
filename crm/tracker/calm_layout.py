@@ -271,3 +271,7 @@ s = s[:a] + r'''function briefHTML(co){
 ''' + s[b:]
 # brief: calmer wording + no API panel unless asked
 s = s.replace('<div class="ih"><b>CALL BRIEF · ${esc(b[0].toUpperCase())}</b><button data-insight>Deeper AI research</button></div>', '<div class="ih"><b>CALL BRIEF</b><button data-insight>Deeper AI research</button></div>')
+
+# Today page: the main button is "Log call"
+assert s.count('>Start calling</button>') == 1
+s = s.replace('>Start calling</button>', '>Log call</button>')
