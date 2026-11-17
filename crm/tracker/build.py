@@ -90,26 +90,11 @@ const topFit = co => rankPeople(co)[0]?.id;""")
 rep("let tab = 'today', curKey = null, curPerson = null, aq = '', ag = 'all', alimit = 80;", "let tab = 'today', curKey = null, curPerson = null, aq = '', ag = 'all', sg = '', alimit = 80;")
 rep("    if(ag !== 'all' && co.g !== ag) return;", "    if(ag !== 'all' && co.g !== ag) return;\n    if(sg && segOf(co) !== sg) return;")
 
-# ---- account list: segment select + tags
-rep("""    ${s ? '' : `<div class="seg">${[['all','All'],['Defence','Defence'],['Aerospace','Aerospace']].map(([v,t]) => `<button data-ag="${v}" aria-pressed="${ag === v}">${t}</button>`).join('')}</div>`}""",
-"""    ${s ? '' : `<div class="seg">${[['all','All'],['Defence','Defence'],['Aerospace','Aerospace']].map(([v,t]) => `<button data-ag="${v}" aria-pressed="${ag === v}">${t}</button>`).join('')}</div>
-    <select class="segsel" id="sgSel" aria-label="Filter by sector"><option value="">All sectors</option>${SEGS().map(x => `<option${x === sg ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select>`}""")
-rep("""<span class="t"><b>${esc(c.name)}</b><small>${c.ppl.length} ${c.ppl.length === 1 ? 'person' : 'people'}</small></span>""",
-"""<span class="t"><b>${esc(c.name)}${c.ppl.some(p => p.nw) ? '<span class="newtag">NEW</span>' : ''}</b><small>${c.ppl.length} ${c.ppl.length === 1 ? 'person' : 'people'} · ${esc(segOf(c))}</small></span>""")
 rep("""  document.querySelectorAll('[data-ag]').forEach(b => b.onclick = () => { ag = b.dataset.ag; render(true); });""",
 """  document.querySelectorAll('[data-ag]').forEach(b => b.onclick = () => { ag = b.dataset.ag; render(true); });
-  const sgs = $('#sgSel'); if(sgs) sgs.onchange = e => { sg = e.target.value; curKey = null; render(true); };""")
+  const sgs = $('#sgSel'); if(sgs) sgs.onchange = e => { sg = e.target.value; curKey = null; render(true); };
+  document.querySelectorAll('[data-sec]').forEach(d => d.ontoggle = () => { d.open ? openSec.add(d.dataset.sec) : openSec.delete(d.dataset.sec); });""")
 
-# ---- company header: sector tag
-rep("""<div class="cm"><span>${co.g}</span>""", """<div class="cm"><span>${co.g} · ${esc(segOf(co))}</span>""")
-
-# ---- callee: best-fit reason
-rep("""<div class="ti">${esc(pr.t || '')}</div></div>""",
-"""<div class="ti">${esc(pr.t || '')}</div>${pr.id === topFit(co) && fitScore(pr).why ? `<div class="why">Best person to call here: ${esc(fitScore(pr).why.toLowerCase())}</div>` : ''}</div>""")
-
-# ---- other people: best fit badge, sorted by fit
-rep("""${co.ppl.filter(p => p.id !== pr.id).map(p => { const pp = P(p.id); return `<div class="pp" data-person="${p.id}"><span class="radio"></span><div style="min-width:0"><b>${esc(p.f + ' ' + (p.l||''))}${a.dm === p.id ? '<span class="dm">Decision maker</span>' : ''}</b>""",
-"""${rankPeople(co).filter(p => p.id !== pr.id).map(p => { const pp = P(p.id), ft = fitScore(p); return `<div class="pp" data-person="${p.id}"><span class="radio"></span><div style="min-width:0"><b>${esc(p.f + ' ' + (p.l||''))}${a.dm === p.id ? '<span class="dm">Decision maker</span>' : ''}${ft.s >= 6 ? '<span class="fit">Good fit</span>' : ''}</b>""")
 
 # ---- insight: built-in brief first, AI research optional
 rep("""function insightHTML(co){
@@ -130,9 +115,7 @@ rep("""  if(!insOpen[co.key] && !it) return `<div class="ins"><div class="ih"><b
 """, "")
 rep("""  if(!settings.apiKey) return `<div class="ins"><div class="ih"><b>AI INSIGHT</b></div>Paste your Anthropic API key once""",
 """  if(!settings.apiKey) return briefHTML(co) + `<div class="ins"><div class="ih"><b>DEEPER AI RESEARCH</b></div>Optional. Paste your Anthropic API key once""")
-rep("""<button class="btn sm dark ai" data-insight>${ic('spark')}Company insight</button>""", """<button class="btn sm dark ai" data-insight>${ic('spark')}Deeper AI research</button>""")
 
-# ---- objections box under the follow-up box
 OBJ = [
  ("We already use DHL / FedEx", "Most of the firms I speak to do, for routine parcels. I'm the number you ring when it has to be there today: a dedicated van straight to the door, or an on-board courier. Worth having me as the backup?"),
  ("Just send me an email", "Happy to. So it's useful and not just another brochure: what does an urgent move usually look like for you? Parts to a customer, or kit between sites?"),
@@ -142,12 +125,10 @@ OBJ = [
  ("Security / controlled goods", "Ask what clearance and paperwork their site needs for drivers and goods, note it, and confirm what we can meet before promising anything."),
 ]
 obj_html = ''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q, a in OBJ)
-rep("""    <div class="box"><h4>Account timeline</h4>""", f"""    <div class="box obj"><h4>If they say…</h4>{obj_html}</div>
-    <div class="box"><h4>Account timeline</h4>""")
-
 # ---- export: add sector column
 rep("""['Company','Industry','Status',""", """['Company','Industry','Sector','Status',""")
 rep("""rows.push([co.name, co.g, SLABEL[a.stage],""", """rows.push([co.name, co.g, segOf(co), SLABEL[a.stage],""")
 
+exec(open(__file__.rsplit('/',1)[0] + '/calm_layout.py', encoding='utf-8').read())
 open(OUT, 'w', encoding='utf-8').write(s)
 print('wrote', OUT, len(s), 'bytes')
