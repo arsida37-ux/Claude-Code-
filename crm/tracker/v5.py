@@ -259,3 +259,12 @@ s = s[:_end] + """
 .crow.on .pav{box-shadow:0 0 0 2px #0A0A0C}
 .cdet .eb::before{background:#0A0A0C}
 """ + s[_end:]
+
+# no confirmation pop-ups at all: actions show on the page itself (reminders and real problems still show)
+rep("function toast(msg, action, win){", "function toast(msg, action, win){ if(/^(Entry removed|Follow-up (done|deleted)|Moved to|Won:|Email marked|Account notes saved|Call updated|Undone|Saved|Contact saved|Contact added|Account saved|Daily goal|Key )/.test(msg) && !(action && action.label === 'Open')) return;")
+# company line: industry · sector · contacts · website (globe)
+rep("""  const info = [esc(co.g), esc(segOf(co)), `<b>${co.ppl.length}</b> contacts`, `<b>${called}</b> called`,""",
+    """  const info = [esc(co.g), esc(segOf(co)), `<b>${co.ppl.length}</b> contacts`, co.w ? `<a class="chd-web" href="${esc(co.w)}" target="_blank" rel="noopener">${ic('web')}Website</a>` : ''].filter(Boolean).map(x => `<span class="ci">${x}</span>`).join('<span class="sep">·</span>');
+  const infoOld = [esc(co.g), esc(segOf(co)), `<b>${co.ppl.length}</b> contacts`, `<b>${called}</b> called`,""")
+_end2 = s.rfind('</style>', 0, s.index('<script>'))
+s = s[:_end2] + ".chd-info .chd-web{display:inline-flex;align-items:center;gap:6px}.chd-info .chd-web svg{width:15px;height:15px;color:#3F3F46}\n" + s[_end2:]
