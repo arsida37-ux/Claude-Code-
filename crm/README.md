@@ -20,3 +20,9 @@ Meeting / Won / Lost / Do-not-call leave the queue.
 
 ## Your data
 Saved in your browser only. Use **Data → Full backup** regularly.
+
+## Team version (online)
+`crm/live.html` is the shared version, published as a claude.ai Artifact.
+- Everyone works from one lead list, kept online
+- A **Today** board shows each caller's dials, connects and meetings, updating live
+- A lead someone is calling is reserved for 10 minutes, so two callers never get the same one

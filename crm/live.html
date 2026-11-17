@@ -1,0 +1,465 @@
+<title>Dial Desk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: sticky tab bar over one working column; call card is the hero, team board is a scoreboard. */
+:root{
+  --bg:#f3f5f4;--card:#ffffff;--ink:#14201d;--muted:#5d6b67;--line:#dde4e1;--soft:#e6f0ed;
+  --accent:#0f766e;--accent-ink:#ffffff;
+  --good:#15803d;--good-bg:#dcfce7;--warn:#b45309;--warn-bg:#fef3c7;--bad:#b91c1c;--bad-bg:#fee2e2;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1413;--card:#161e1c;--ink:#e4ece9;--muted:#93a39e;--line:#26322f;--soft:#1b2a27;
+  --accent:#2dd4bf;--accent-ink:#06201c;
+  --good:#4ade80;--good-bg:#12301f;--warn:#fbbf24;--warn-bg:#33270c;--bad:#f87171;--bad-bg:#3a1515;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1413;--card:#161e1c;--ink:#e4ece9;--muted:#93a39e;--line:#26322f;--soft:#1b2a27;
+  --accent:#2dd4bf;--accent-ink:#06201c;
+  --good:#4ade80;--good-bg:#12301f;--warn:#fbbf24;--warn-bg:#33270c;--bad:#f87171;--bad-bg:#3a1515;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--sans)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--card)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+.bar{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.brand{font-weight:700;font-size:17px;margin-right:auto;display:flex;align-items:center;gap:8px}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--accent);display:inline-block}
+nav{display:flex;gap:2px;flex-wrap:wrap}
+nav button{background:none;border:0;color:var(--muted);padding:8px 12px;border-radius:8px;font:inherit;font-weight:500;cursor:pointer}
+nav button[aria-current="true"]{background:var(--soft);color:var(--accent)}
+main{max-width:1080px;margin:0 auto;padding-block:16px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:16px}
+h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:8px 0 0;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+button.b{font:inherit;font-weight:500;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:8px;cursor:pointer}
+button.b:hover{border-color:var(--accent)}
+button.b:focus-visible,nav button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+button.p{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button:disabled{opacity:.5;cursor:not-allowed}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;min-width:0}
+textarea{min-height:70px;resize:vertical}
+label{font-size:12px;color:var(--muted);display:block;margin:10px 0 4px;font-weight:500}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:99px;background:var(--soft);color:var(--accent);white-space:nowrap}
+.tag.Interested,.tag.Meeting,.tag.Won{background:var(--good-bg);color:var(--good)}
+.tag.Callback{background:var(--warn-bg);color:var(--warn)}
+.tag.Lost,.tag.DNC{background:var(--bad-bg);color:var(--bad)}
+.note{padding:10px 12px;border-radius:8px;background:var(--soft);font-size:14px}
+.note.bad{background:var(--bad-bg);color:var(--bad)}
+
+/* call card */
+.lead-name{font-size:24px;font-weight:700;margin:0;text-wrap:balance}
+.phone{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 4px}
+.phone a{font-family:var(--mono);font-size:26px;font-weight:600;color:var(--accent);text-decoration:none;user-select:all}
+.outcomes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.outcomes button{padding:12px}
+.o-good{border-color:var(--good)!important;color:var(--good)!important}
+.o-bad{border-color:var(--bad)!important;color:var(--bad)!important}
+.o-warn{border-color:var(--warn)!important;color:var(--warn)!important}
+.log{font-size:13px;border-left:2px solid var(--line);padding-left:10px;margin:6px 0}
+
+/* scoreboard */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.tile b{display:block;font-family:var(--mono);font-size:28px;font-weight:600;font-variant-numeric:tabular-nums}
+.tile span{font-size:12px;color:var(--muted)}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:12px;color:var(--muted);font-weight:600}
+td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+tr.click{cursor:pointer}tr.click:hover{background:var(--soft)}
+.who{display:flex;align-items:center;gap:8px}
+.who img{width:26px;height:26px;border-radius:50%}
+.meter{height:6px;background:var(--soft);border-radius:3px;overflow:hidden;min-width:60px}
+.meter i{display:block;height:100%;background:var(--accent)}
+.feed div{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.feed div:last-child{border-bottom:0}
+.feed time{font-family:var(--mono);color:var(--muted);min-width:64px}
+
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);width:min(620px,calc(100% - 32px));padding:20px;max-height:90vh}
+dialog::backdrop{background:#0008}
+.toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20}
+.toast.on{opacity:1}
+@media (max-width:640px){.grid2{grid-template-columns:1fr}.hide-sm{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header><div class="bar">
+  <div class="brand"><i></i>Dial Desk</div>
+  <nav id="nav">
+    <button data-v="team" aria-current="true">Today</button>
+    <button data-v="call">Call</button>
+    <button data-v="leads">Leads</button>
+    <button data-v="data">Import</button>
+  </nav>
+</div></header>
+
+<main>
+  <div id="status" class="note" hidden></div>
+
+  <!-- TODAY / TEAM -->
+  <section id="v-team">
+    <div class="row" style="justify-content:space-between"><h2 id="todayLabel">Today</h2><span class="muted" id="liveNote">Live</span></div>
+    <div class="tiles" id="tTiles" style="margin-top:8px"></div>
+    <h2 style="margin-top:20px">By caller</h2>
+    <div class="card tablewrap" style="margin-top:8px">
+      <table><thead><tr><th>Caller</th><th class="n">Dials</th><th class="n">Connects</th><th class="n">Meetings</th><th class="hide-sm">Pace</th><th class="n hide-sm">Last call</th></tr></thead>
+      <tbody id="tReps"></tbody></table>
+      <p class="muted" id="tEmpty" hidden>No calls logged yet today. Open <b>Call</b> to start dialing.</p>
+    </div>
+    <h2 style="margin-top:20px">Latest calls</h2>
+    <div class="card feed" id="tFeed" style="margin-top:8px"></div>
+    <h2 style="margin-top:20px">Pipeline</h2>
+    <div class="tiles" id="tPipe" style="margin-top:8px"></div>
+  </section>
+
+  <!-- CALL -->
+  <section id="v-call" hidden>
+    <div class="muted" id="qinfo"></div>
+    <div id="callEmpty" class="card" hidden style="margin-top:8px">
+      <p class="lead-name">Queue is clear</p>
+      <p class="muted">Nobody left to call right now. Import leads in <b>Import</b>, or check back when follow-ups come due.</p>
+    </div>
+    <div id="callRO" class="card" hidden style="margin-top:8px">
+      <p class="lead-name">View only</p>
+      <p class="muted">You can watch today's progress. To make calls, ask the owner to give you Contributor access.</p>
+    </div>
+    <div id="callCard" class="card" hidden style="margin-top:8px">
+      <div class="row"><p class="lead-name" id="cName"></p><span class="tag" id="cStatus"></span></div>
+      <div class="muted" id="cAddr"></div>
+      <div class="phone"><a id="cPhone"></a><button class="b" id="copyPhone">Copy</button></div>
+      <div class="muted" id="cMeta"></div>
+      <div class="grid2">
+        <div><label for="cDm">Decision maker</label><input id="cDm" placeholder="Name"></div>
+        <div><label for="cRole">Role</label><input id="cRole" placeholder="Owner, GM…"></div>
+        <div><label for="cEmail">Email</label><input id="cEmail" placeholder="Only if they give it"></div>
+        <div><label for="cFu">Follow-up date</label><input id="cFu" type="date"></div>
+      </div>
+      <label for="cNote">Call notes</label>
+      <textarea id="cNote" placeholder="What happened?"></textarea>
+      <label>Outcome: logs the call and loads the next lead</label>
+      <div class="outcomes" id="outcomes"></div>
+      <div class="row" style="margin-top:12px"><button class="b" id="skip">Skip</button></div>
+      <div id="cHist" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+  <!-- LEADS -->
+  <section id="v-leads" hidden>
+    <div class="card row">
+      <input id="q" placeholder="Search name, phone, city…" style="flex:2;min-width:180px">
+      <select id="fStatus" style="flex:1;min-width:140px"></select>
+      <button class="b p" id="addLead">Add lead</button>
+    </div>
+    <div class="card tablewrap" style="margin-top:12px">
+      <table><thead><tr><th>Business</th><th>Phone</th><th class="hide-sm">City</th><th>Status</th><th class="n hide-sm">Calls</th><th class="hide-sm">Follow-up</th></tr></thead>
+      <tbody id="tbody"></tbody></table>
+      <p class="muted" id="count"></p>
+    </div>
+  </section>
+
+  <!-- IMPORT -->
+  <section id="v-data" hidden>
+    <div class="card">
+      <h2 style="margin:0 0 8px">Import leads (CSV)</h2>
+      <p class="muted">Works with <code>scrape_leads.py</code> output and any CSV with a business name and phone column. Leads already in the list (same phone number) are skipped.</p>
+      <input type="file" id="csvFile" accept=".csv,text/csv">
+      <p id="impProg" class="muted"></p>
+    </div>
+    <div class="card">
+      <h2 style="margin:0 0 8px">Export</h2>
+      <button class="b" id="expCsv">Download leads as CSV</button>
+    </div>
+  </section>
+</main>
+
+<dialog id="dlg">
+  <form id="dlgForm">
+    <h2 style="margin:0" id="dlgTitle">Lead</h2>
+    <div class="grid2">
+      <div><label for="f-name">Business name</label><input id="f-name" name="name" required></div>
+      <div><label for="f-phone">Phone</label><input id="f-phone" name="phone" required></div>
+      <div><label for="f-dm">Decision maker</label><input id="f-dm" name="dm"></div>
+      <div><label for="f-role">Role</label><input id="f-role" name="role"></div>
+      <div><label for="f-email">Email</label><input id="f-email" name="email"></div>
+      <div><label for="f-status">Status</label><select id="f-status" name="status"></select></div>
+      <div><label for="f-city">City</label><input id="f-city" name="city"></div>
+      <div><label for="f-state">State</label><input id="f-state" name="state"></div>
+      <div><label for="f-followup">Follow-up</label><input id="f-followup" name="followup" type="date"></div>
+      <div><label for="f-address">Address</label><input id="f-address" name="address"></div>
+    </div>
+    <label for="f-notes">Notes</label><textarea id="f-notes" name="notes"></textarea>
+    <div id="dlgHist"></div>
+    <div class="row" style="margin-top:16px;justify-content:flex-end">
+      <button type="button" class="b o-bad" id="dlgDel">Delete</button>
+      <button type="button" class="b" id="dlgCancel">Cancel</button>
+      <button type="submit" class="b p" id="dlgSave">Save</button>
+    </div>
+  </form>
+</dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const STATUSES=['New','Attempting','Callback','Interested','Meeting','Won','Lost','DNC'];
+const CLOSED=['Meeting','Won','Lost','DNC'];
+const OUTCOMES=[
+  {k:'No answer',s:'Attempting',c:'',fu:1},
+  {k:'Voicemail',s:'Attempting',c:'',fu:1},
+  {k:'Gatekeeper',s:'Attempting',c:'o-warn',fu:1},
+  {k:'Call back',s:'Callback',c:'o-warn',fu:2},
+  {k:'Interested',s:'Interested',c:'o-good',fu:3},
+  {k:'Meeting booked',s:'Meeting',c:'o-good'},
+  {k:'Not interested',s:'Lost',c:'o-bad'},
+  {k:'Wrong number',s:'Lost',c:'o-bad'},
+  {k:'Do not call',s:'DNC',c:'o-bad'},
+];
+const CONNECTS=['Gatekeeper','Call back','Interested','Meeting booked','Not interested','Do not call'];
+const LOCK_MS=10*60*1000;
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ymd=d=>d.toLocaleDateString('en-CA');
+const today=()=>ymd(new Date());
+const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return ymd(d)};
+const digits=p=>String(p||'').replace(/\D/g,'');
+const hm=iso=>new Date(iso).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2200)}
+function status(m,bad){const s=$('#status');s.hidden=!m;s.textContent=m||'';s.classList.toggle('bad',!!bad)}
+
+/* ---------- state ---------- */
+let db=null,user=null,me=null,canWrite=false,dl=null;
+let leads=new Map();      // id -> data
+let days=[];              // day docs {date,by,calls:[]}
+let myDay=null;           // my doc for today
+let profiles={};
+let view='team',currentId=null,skipped=new Set();
+
+/* one write at a time */
+let chain=Promise.resolve();
+const write=fn=>(chain=chain.then(fn).catch(e=>{
+  if(e&&e.code==='quota_exceeded')status('Storage is full. Delete old leads to add more.',true);
+  else toast('Could not save that change. Check your connection or access.');
+  console.warn(e);
+}));
+
+/* ---------- views ---------- */
+$('#nav').onclick=e=>{const v=e.target.dataset.v;if(v)show(v)};
+function show(v){
+  view=v;
+  document.querySelectorAll('#nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.v===v));
+  ['team','call','leads','data'].forEach(x=>$('#v-'+x).hidden=x!==v);
+  render();
+}
+function render(){({team:renderTeam,call:renderCall,leads:renderLeads,data:()=>{}})[view]()}
+
+/* ---------- team / today ---------- */
+const isConnect=o=>CONNECTS.includes(o);
+async function renderTeam(){
+  const t=today();
+  $('#todayLabel').textContent='Today · '+new Date().toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'});
+  const todays=days.filter(d=>d.date===t);
+  const all=todays.flatMap(d=>(d.calls||[]).map(c=>({...c,by:d.by})));
+  const n=all.length,cn=all.filter(c=>isConnect(c.o)).length,mt=all.filter(c=>c.o==='Meeting booked').length;
+  const pct=(a,b)=>b?Math.round(a/b*100)+'%':'–';
+  $('#tTiles').innerHTML=[['Dials',n],['Connects',cn],['Connect rate',pct(cn,n)],['Meetings',mt],['Callers',todays.filter(d=>(d.calls||[]).length).length]]
+    .map(([k,v])=>`<div class="tile"><b>${v}</b><span>${k}</span></div>`).join('');
+  const reps=todays.filter(d=>(d.calls||[]).length).map(d=>{const c=d.calls;return{by:d.by,n:c.length,cn:c.filter(x=>isConnect(x.o)).length,mt:c.filter(x=>x.o==='Meeting booked').length,last:c[c.length-1].at}}).sort((a,b)=>b.n-a.n);
+  const ids=[...new Set([...reps.map(r=>r.by),...all.map(c=>c.by)])];
+  if(user&&ids.length)profiles=await user.profiles(ids);
+  const max=Math.max(1,...reps.map(r=>r.n));
+  const who=id=>{const p=profiles[id]||{};return`<span class="who"><img alt="" src="${esc(p.avatarUrl||'')}"><span data-name="${esc(id)}"></span></span>`};
+  $('#tReps').innerHTML=reps.map(r=>`<tr><td>${who(r.by)}</td><td class="n">${r.n}</td><td class="n">${r.cn}</td><td class="n">${r.mt}</td><td class="hide-sm"><div class="meter"><i style="width:${Math.round(r.n/max*100)}%"></i></div></td><td class="n hide-sm">${hm(r.last)}</td></tr>`).join('');
+  $('#tEmpty').hidden=reps.length>0;
+  const feed=all.sort((a,b)=>b.at.localeCompare(a.at)).slice(0,15);
+  $('#tFeed').innerHTML=feed.length?feed.map(c=>`<div><time>${hm(c.at)}</time><span data-name="${esc(c.by)}"></span><span class="muted">${esc(c.name||'')}</span><span class="tag ${esc((OUTCOMES.find(o=>o.k===c.o)||{}).s||'')}">${esc(c.o)}</span></div>`).join(''):'<span class="muted">Calls will appear here as they happen.</span>';
+  document.querySelectorAll('[data-name]').forEach(el=>{const p=profiles[el.dataset.name];el.textContent=(p&&p.name)||(me&&el.dataset.name===me.id?'You':'Teammate')});
+  const L=[...leads.values()];
+  $('#tPipe').innerHTML=STATUSES.map(s=>`<div class="tile"><b>${L.filter(l=>(l.status||'New')===s).length}</b><span>${s}</span></div>`).join('');
+}
+
+/* ---------- call queue ---------- */
+const lockedByOther=l=>l.lockBy&&me&&l.lockBy!==me.id&&(l.lockUntil||0)>Date.now();
+function eligible(l){const t=today();return !CLOSED.includes(l.status||'New')&&(!l.followup||l.followup<=t)&&!lockedByOther(l)}
+function queue(){
+  const rank=l=>l.followup?0:(l.status||'New')==='New'?1:2;
+  return [...leads.entries()].map(([id,l])=>({id,...l})).filter(eligible)
+    .sort((a,b)=>rank(a)-rank(b)||(a.calls||0)-(b.calls||0)||(a.lastCall||'').localeCompare(b.lastCall||''));
+}
+function renderCall(){
+  $('#callRO').hidden=canWrite;
+  if(!canWrite){$('#callCard').hidden=$('#callEmpty').hidden=true;$('#qinfo').textContent='';return}
+  let q=queue();
+  const due=q.filter(l=>l.followup).length;
+  const mine=myDay?(myDay.calls||[]).length:0;
+  $('#qinfo').textContent=`${q.length} to call · ${due} follow-ups due · ${mine} calls by you today`;
+  const cur=currentId&&leads.get(currentId);
+  if(!(cur&&eligible(cur))){
+    let pick=q.filter(l=>!skipped.has(l.id));
+    if(!pick.length&&skipped.size){skipped.clear();pick=q}
+    currentId=pick[0]?pick[0].id:null;
+    if(currentId){const l=leads.get(currentId);if(l.lockBy!==me.id||(l.lockUntil||0)<Date.now()+60000){const id=currentId;write(()=>db.doc('leads/'+id).update({lockBy:me.id,lockUntil:Date.now()+LOCK_MS}))}}
+    fillCard();
+  }
+  $('#callEmpty').hidden=!!currentId;$('#callCard').hidden=!currentId;
+}
+function fillCard(){
+  if(!currentId)return;
+  const l=leads.get(currentId);
+  $('#cName').textContent=l.name;
+  $('#cStatus').textContent=l.status||'New';$('#cStatus').className='tag '+(l.status||'New');
+  $('#cAddr').textContent=l.address||[l.city,l.state].filter(Boolean).join(', ');
+  $('#cPhone').textContent=l.phone;$('#cPhone').href='tel:'+digits(l.phone);
+  $('#cMeta').innerHTML=[l.rating&&`★ ${esc(l.rating)} (${esc(l.reviews||0)} reviews)`,l.mapsUrl&&`<a href="${esc(l.mapsUrl)}" target="_blank" rel="noopener">Google Maps</a>`,l.followup&&`Follow-up due ${esc(l.followup)}`].filter(Boolean).join(' · ');
+  $('#cDm').value=l.dm||'';$('#cRole').value=l.role||'';$('#cEmail').value=l.email||'';$('#cFu').value='';$('#cNote').value='';
+  $('#cHist').innerHTML=hist(l);
+}
+function hist(l){
+  const p=[];if(l.notes)p.push(`<div class="log"><b>Notes:</b> ${esc(l.notes)}</div>`);
+  (l.history||[]).slice().reverse().forEach(c=>p.push(`<div class="log"><b>${esc(c.o)}</b> <span class="muted">${new Date(c.at).toLocaleString([],{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</span>${c.n?'<br>'+esc(c.n):''}</div>`));
+  return p.length?'<label>History</label>'+p.join(''):'';
+}
+$('#copyPhone').onclick=()=>{const t=$('#cPhone').textContent;navigator.clipboard.writeText(t).then(()=>toast('Number copied'),()=>{const r=document.createRange();r.selectNodeContents($('#cPhone'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Number selected. Press Ctrl+C')})};
+$('#outcomes').innerHTML=OUTCOMES.map((o,i)=>`<button class="b ${o.c}" data-i="${i}">${o.k}</button>`).join('');
+$('#outcomes').onclick=e=>{
+  const i=e.target.dataset.i;if(i==null||!currentId)return;
+  const o=OUTCOMES[i],id=currentId,l=leads.get(id),now=new Date().toISOString();
+  const n=$('#cNote').value.trim(),fuPick=$('#cFu').value;
+  const patch={dm:$('#cDm').value.trim(),role:$('#cRole').value.trim(),email:$('#cEmail').value.trim(),
+    status:o.s,followup:fuPick||(o.fu?addDays(o.fu):''),calls:(l.calls||0)+1,lastCall:now,lastOutcome:o.k,lastBy:me.id,
+    history:[...(l.history||[]),{at:now,o:o.k,n,by:me.id}].slice(-25),lockBy:null,lockUntil:0};
+  leads.set(id,{...l,...patch});
+  const dayId=today()+'__'+me.id;
+  const calls=[...((myDay&&myDay.date===today()&&myDay.calls)||[]),{at:now,o:o.k,lead:id,name:l.name}];
+  myDay={date:today(),by:me.id,calls};
+  write(()=>db.doc('leads/'+id).update(patch));
+  write(()=>db.doc('days/'+dayId).set({date:myDay.date,by:me.id,calls}));
+  currentId=null;toast('Logged: '+o.k);render();
+};
+$('#skip').onclick=()=>{if(currentId){const id=currentId;skipped.add(id);write(()=>db.doc('leads/'+id).update({lockBy:null,lockUntil:0}));currentId=null}render()};
+
+/* ---------- leads table ---------- */
+$('#fStatus').innerHTML='<option value="">All statuses</option><option value="_due">Follow-up due</option>'+STATUSES.map(s=>`<option>${s}</option>`).join('');
+$('#q').oninput=renderLeads;$('#fStatus').onchange=renderLeads;
+function renderLeads(){
+  $('#addLead').disabled=!canWrite;
+  const q=$('#q').value.toLowerCase(),f=$('#fStatus').value,t=today();
+  const rows=[...leads.entries()].map(([id,l])=>({id,...l})).filter(l=>{
+    const st=l.status||'New';
+    if(f==='_due'?!(l.followup&&l.followup<=t&&!CLOSED.includes(st)):(f&&st!==f))return false;
+    if(!q)return true;
+    return [l.name,l.phone,l.city,l.state,l.dm,l.email].join(' ').toLowerCase().includes(q)||(digits(q)&&digits(l.phone).includes(digits(q)));
+  }).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  $('#tbody').innerHTML=rows.slice(0,500).map(l=>`<tr class="click" data-id="${esc(l.id)}"><td><b>${esc(l.name)}</b>${l.dm?`<br><span class="muted">${esc(l.dm)}</span>`:''}</td><td class="mono">${esc(l.phone)}</td><td class="hide-sm">${esc([l.city,l.state].filter(Boolean).join(', '))}</td><td><span class="tag ${esc(l.status||'New')}">${esc(l.status||'New')}</span></td><td class="n hide-sm">${l.calls||0}</td><td class="hide-sm">${esc(l.followup||'')}</td></tr>`).join('');
+  $('#count').textContent=`${rows.length} of ${leads.size} leads`+(rows.length>500?' (first 500 shown)':'');
+}
+$('#tbody').onclick=e=>{const tr=e.target.closest('tr');if(tr)openLead(tr.dataset.id)};
+$('#addLead').onclick=()=>openLead(null);
+
+const F=$('#dlgForm'),FIELDS=['name','phone','dm','role','email','status','city','state','followup','address','notes'];
+F.status.innerHTML=STATUSES.map(s=>`<option>${s}</option>`).join('');
+let editing=null,delArmed=false;
+function openLead(id){
+  editing=id;delArmed=false;const l=id?leads.get(id):null;
+  $('#dlgTitle').textContent=l?'Edit lead':'New lead';
+  $('#dlgDel').hidden=!l||!canWrite;$('#dlgDel').textContent='Delete';
+  $('#dlgSave').hidden=!canWrite;
+  FIELDS.forEach(k=>F[k].value=l?(l[k]||(k==='status'?'New':'')):(k==='status'?'New':''));
+  $('#f-phone').disabled=!!l;
+  $('#dlgHist').innerHTML=l?hist({...l,notes:''}):'';
+  $('#dlg').showModal();
+}
+$('#dlgCancel').onclick=()=>$('#dlg').close();
+$('#dlgDel').onclick=()=>{
+  if(!delArmed){delArmed=true;$('#dlgDel').textContent='Tap again to delete';return}
+  const id=editing;leads.delete(id);write(()=>db.doc('leads/'+id).delete());$('#dlg').close();toast('Lead deleted');render();
+};
+F.onsubmit=e=>{
+  e.preventDefault();
+  const d={};FIELDS.forEach(k=>d[k]=F[k].value.trim());
+  if(editing){const id=editing;delete d.phone;leads.set(id,{...leads.get(id),...d});write(()=>db.doc('leads/'+id).update(d))}
+  else{const id=digits(d.phone);if(!id){toast('Enter a phone number');return}
+    if(leads.has(id)){toast('That phone number is already in the list');return}
+    const doc={...d,calls:0,created:new Date().toISOString()};leads.set(id,doc);write(()=>db.doc('leads/'+id).set(doc))}
+  $('#dlg').close();toast('Saved');render();
+};
+
+/* ---------- CSV import / export ---------- */
+function parseCSV(text){
+  const rows=[];let row=[],f='',q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"')q=true;else if(c===','){row.push(f);f=''}
+    else if(c==='\n'||c==='\r'){if(c==='\r'&&text[i+1]==='\n')i++;row.push(f);rows.push(row);row=[];f=''}
+    else f+=c}
+  if(f||row.length){row.push(f);rows.push(row)}
+  return rows.filter(r=>r.some(x=>x.trim()));
+}
+const MAP={name:['business_name','name','company','business'],phone:['formatted_phone','phone','phone_number','international_phone'],
+  address:['address','formatted_address'],city:['city'],state:['state'],mapsUrl:['google_maps_url','maps_url'],rating:['rating'],
+  reviews:['review_count','reviews'],dm:['decision_maker_name','contact','contact_name'],role:['decision_maker_role','role','title'],
+  email:['email'],notes:['notes']};
+$('#csvFile').onchange=async e=>{
+  const file=e.target.files[0];if(!file)return;e.target.value='';
+  if(!canWrite){toast('You have view-only access');return}
+  const rows=parseCSV(await file.text());
+  if(rows.length<2){$('#impProg').textContent='That file has no rows.';return}
+  const head=rows[0].map(h=>h.trim().toLowerCase().replace(/^﻿/,''));
+  const idx={};for(const[k,alts]of Object.entries(MAP))idx[k]=alts.map(a=>head.indexOf(a)).find(i=>i>=0);
+  if(idx.name==null||idx.phone==null){$('#impProg').textContent='Could not find a business name and phone column in that file.';return}
+  const todo=[];let dup=0;const seen=new Set(leads.keys());
+  for(const r of rows.slice(1)){
+    const l={status:'New',calls:0,created:new Date().toISOString()};
+    for(const k in idx)if(idx[k]!=null&&r[idx[k]]&&r[idx[k]].trim())l[k]=r[idx[k]].trim();
+    const id=digits(l.phone);if(!l.name||!id)continue;
+    if(seen.has(id)){dup++;continue}seen.add(id);todo.push([id,l]);
+  }
+  let done=0,failed=0;const P=$('#impProg');
+  const step=()=>P.textContent=`Importing ${done} of ${todo.length}…`;step();
+  let k=0;
+  async function worker(){while(k<todo.length){const[id,l]=todo[k++];
+    try{await db.doc('leads/'+id).set(l)}catch(err){failed++;if(err.code==='quota_exceeded'){k=todo.length}}
+    done++;if(done%5===0)step()}}
+  await Promise.all([worker(),worker(),worker()]);
+  P.textContent=`Imported ${done-failed} leads. Skipped ${dup} already in the list.`+(failed?` ${failed} could not be saved.`:'');
+};
+const csvCell=v=>/[",\n]/.test(v=String(v??''))?'"'+v.replace(/"/g,'""')+'"':v;
+$('#expCsv').onclick=async()=>{
+  if(!dl){toast('Downloads are not available here');return}
+  const cols=['name','phone','dm','role','email','status','followup','city','state','address','rating','reviews','mapsUrl','notes','calls','lastOutcome','lastCall'];
+  const lines=[cols.join(',')];leads.forEach(l=>lines.push(cols.map(c=>csvCell(l[c])).join(',')));
+  try{await dl.save({filename:`leads-${today()}.csv`,data:lines.join('\n')})}catch(e){if(e.code!=='declined')toast('Could not save the file')}
+};
+
+/* ---------- boot ---------- */
+(async()=>{
+  status('Connecting…');
+  const [d,u,dd]=await Promise.all([claude.use('db'),claude.use('user'),claude.use('downloads')]);
+  db=d;user=u;dl=dd;
+  if(!db){status('Sign in to claude.ai to see the team board.',true);return}
+  me=user?await user.me():null;
+  const cw=user?await user.can('data.write'):null;
+  canWrite=!!(me&&me.id)&&cw!==false;
+  $('#expCsv').hidden=!dl;
+  let loaded=0;const timer=setTimeout(()=>status('Still connecting. Data may be out of date.',true),10000);
+  const ready=snap=>{if(!snap.metadata.fromCache&&++loaded>=2){clearTimeout(timer);status('')}};
+  db.collection('leads').onSnapshot(snap=>{
+    leads=new Map(snap.docs.map(x=>[x.id,x.data()]));ready(snap);
+    if(view==='call'){const cur=currentId&&leads.get(currentId);if(!(cur&&eligible(cur)))renderCall();else $('#qinfo')&&renderCallInfo()}
+    else render();
+  },err=>{clearTimeout(timer);status('Could not load leads.',true)});
+  db.collection('days').onSnapshot(snap=>{
+    days=snap.docs.map(x=>x.data());
+    if(me&&me.id){const mine=days.find(x=>x.date===today()&&x.by===me.id);if(mine&&(!myDay||(mine.calls||[]).length>=(myDay.calls||[]).length))myDay=mine}
+    ready(snap);if(view!=='call')render();else renderCallInfo();
+  },err=>{clearTimeout(timer);status('Could not load today\'s calls.',true)});
+  if(canWrite)show('call');else render();
+})();
+function renderCallInfo(){if(!canWrite)return;const q=queue();const mine=myDay&&myDay.date===today()?(myDay.calls||[]).length:0;
+  $('#qinfo').textContent=`${q.length} to call · ${q.filter(l=>l.followup).length} follow-ups due · ${mine} calls by you today`}
+</script>
