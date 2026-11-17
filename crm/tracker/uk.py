@@ -35,7 +35,7 @@ FIX_MORE = {
 for w in ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','january','february','march','april','june','july','august','september','october','november','december',
           'london','manchester','birmingham','bristol','glasgow','edinburgh','leeds','liverpool','sheffield','cardiff','belfast','newcastle','southampton','portsmouth','plymouth',
           'derby','nottingham','leicester','coventry','reading','oxford','cambridge','aberdeen','dundee','swindon','preston','barrow','farnborough','filton','broughton','yeovil',
-          'stevenage','luton','gosport','brize','norton','heathrow','gatwick','stansted','uk','mod','raf','nato','aog','dhl','ups','fedex','tnt','dpd']:
+          'stevenage','luton','gosport','brize','norton','heathrow','gatwick','stansted','devonport','rosyth','faslane','clyde','govan','scotstoun','aldermaston','burghfield','boscombe','lossiemouth','coningsby','marham','waddington','odiham','lyneham','benson','northolt','abingdon','catterick','tidworth','bovington','salisbury','telford','merthyr','tydfil','bedford','chelmsford','basingstoke','farnham','crawley','harlow','bolton','preston','warton','samlesbury','prestwick','hebrides','dorset','hampshire','wiltshire','scotland','wales','england','ireland','uk','mod','raf','nato','aog','dhl','ups','fedex','tnt','dpd']:
     FIX_MORE[w] = w.upper() if w in ('uk','mod','raf','nato','aog','dhl','ups','tnt','dpd') else ('FedEx' if w == 'fedex' else w.capitalize())
 FIX_MORE.update({'thru':'through','tho':'though','logistisc':'logistics','logisitc':'logistic','urgnetly':'urgently','asap':'ASAP','ok':'OK','fyi':'FYI'})
 import json as _j
