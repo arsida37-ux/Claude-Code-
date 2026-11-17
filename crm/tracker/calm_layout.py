@@ -144,6 +144,32 @@ select.segsel{background:var(--panel)}
 .opener{margin-top:14px;padding:11px 14px;border-radius:12px;background:var(--soft);border:1px solid var(--line-2);font-size:13.5px;line-height:1.5}
 .opener small{display:block;color:var(--muted);font-size:11.5px;margin-bottom:2px}
 </style>""")
+rep('.opener small{display:block;color:var(--muted);font-size:11.5px;margin-bottom:2px}\n', '''.opener small{display:block;color:var(--muted);font-size:11.5px;margin-bottom:2px}
+/* compact contact strip: office number leads */
+.whoc{padding:14px 20px}
+.who-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.who-id{min-width:0}
+.who-id .nm{font-size:17px;font-weight:600}
+.who-id .ti{color:var(--muted);font-size:13px}
+.who-id .dm{font-size:10.5px;font-weight:500;color:var(--accent-d);background:var(--accent-soft);border-radius:99px;padding:1px 8px;margin-left:8px;vertical-align:2px}
+.whoc .why{display:inline;margin-left:4px;font-size:12.5px}
+.office{text-align:right}
+.office small{display:block;color:var(--muted);font-size:11.5px}
+.office b{font-size:23px;font-weight:600;font-variant-numeric:tabular-nums;user-select:all;color:var(--ink);white-space:nowrap}
+.who-meta{display:flex;gap:8px 20px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--line-2);font-size:13px}
+.mi{display:inline-flex;gap:7px;align-items:center;min-width:0;flex-wrap:wrap}
+.mi small{color:var(--muted);font-size:12px}
+.mi .v{font-variant-numeric:tabular-nums}
+.mi a{overflow-wrap:anywhere}
+.cp{border:1px solid var(--line);background:var(--panel);border-radius:7px;padding:1px 8px;font-size:11.5px;color:var(--accent-d);cursor:pointer;font-family:inherit}
+.cp:hover{border-color:var(--accent)}
+.whoc .plinks{margin-top:8px;gap:14px;font-size:13px;align-items:center}
+/* the outcome is the focus */
+.step.outc{border-color:color-mix(in srgb,var(--accent) 30%,var(--line));box-shadow:0 0 0 4px rgba(59,130,246,.06),var(--shadow)}
+.outc .step-h{font-size:15px;color:var(--ink);font-weight:600}
+.outc .o{padding:9px 15px;font-size:13.5px}
+@media (max-width:600px){.office{text-align:left}}
+''')
 
 # ---------- one-column accounts view ----------
 start = s.index('function rAccounts(){'); end = s.index('function bindAccounts(co, pr){')
@@ -161,6 +187,7 @@ function rAccounts(){
   const called = co.ppl.filter(p => P(p.id).lastOutcome).length;
   const log = (a.log||[]).map((e,i) => ({e,i})).reverse();
   const ph = phones(pr), others = rankPeople(co).filter(p => p.id !== pr.id);
+  const mainPh = ph.find(x => x[0] === 'Office') || ph[0], restPh = ph.filter(x => x !== mainPh);
   const chip = o => `<button class="o" style="--c:var(${o.c})" data-out="${o.k}" aria-pressed="${form.outcome === o.k}"><i></i>${o.t}</button>`;
   const fold = (id, title, n, body, pad) => `<details class="card fold" data-sec="${id}"${openSec.has(id) ? ' open' : ''}><summary><span>${title}</span>${n != null ? `<em>${n}</em>` : ''}</summary><div class="fold-b${pad ? ' pad' : ''}">${body}</div></details>`;
   const peopleRows = others.map(p => { const pp = P(p.id), f2 = fitScore(p); return `<div class="pp" data-person="${p.id}"><span class="radio"></span><div style="min-width:0"><b>${esc(p.f + ' ' + (p.l||''))}${a.dm === p.id ? '<span class="dm">Decision maker</span>' : ''}${f2.s >= 6 ? '<span class="fit">Good fit</span>' : ''}</b><small>${esc(p.t || '')}</small></div><span class="ph">${esc(phones(p)[0]?.[1] || '—')}</span>
@@ -185,17 +212,16 @@ function rAccounts(){
       <div class="hero-links">${co.w ? `<a class="link" href="${esc(co.w)}" target="_blank" rel="noopener">${ic('web')}Website</a>` : ''}${co.li ? `<a class="link" href="${esc(co.li)}" target="_blank" rel="noopener">${ic('li')}LinkedIn</a>` : ''}<button class="link" data-edit-acc>${ic('edit')}Edit account</button><button class="link" data-add-person>${ic('plus')}Add contact</button></div>
     </section>
 
-    <section class="card step"><div class="step-h"><b>1</b>Who to call</div>
-      <div class="who"><div><div class="nm">${esc(pr.f + ' ' + (pr.l||''))}${a.dm === pr.id ? '<span class="dm" style="font-size:11px;font-weight:600;color:var(--accent-d);background:var(--accent-soft);border-radius:99px;padding:2px 8px;margin-left:8px;vertical-align:3px">Decision maker</span>' : ''}</div><div class="ti">${esc(pr.t || '')}</div>
-        ${pr.id === topFit(co) && ft.why ? `<div class="why">Best person to call here: ${esc(ft.why.toLowerCase())}</div>` : ''}</div>
-        <span class="muted" style="font-size:12.5px">${last.lastOutcome ? 'Last: ' + esc(OMAP[last.lastOutcome]?.t || last.lastOutcome) + ', ' + fmtTs(last.lastTs) : 'Not called yet'}</span></div>
-      <div class="nums">${ph.map(([k,v], i) => `<div class="numbox${i === 0 ? ' main' : ''}"><small>${esc(k)}</small><b>${esc(v)}</b></div>`).join('') || '<div class="numbox"><small>No numbers yet</small><b class="em">Use Edit contact to add one</b></div>'}</div>
-      ${pr.e ? `<div class="small-line">${esc(pr.e)}</div>` : ''}
-      ${BR(co.key) ? `<div class="opener"><small>Opening line</small>"Hi ${esc(pr.f)}, it's Arsida. I look after urgent same-day deliveries for firms like ${esc(casual(co))}. When a part or kit has to be somewhere today, who sorts that out for you?"</div>` : ''}
-      <div class="plinks">${pr.li ? `<a class="link" href="${esc(pr.li)}" target="_blank" rel="noopener">${ic('li')}LinkedIn</a>` : ''}<button class="link" data-edit-person="${pr.id}">${ic('edit')}Edit contact</button><button class="link" data-dm="${pr.id}">${ic('star')}${a.dm === pr.id ? 'Remove decision maker' : 'Mark as decision maker'}</button></div>
+    <section class="card step whoc">
+      <div class="who-row"><div class="who-id"><div class="nm">${esc(pr.f + ' ' + (pr.l||''))}${a.dm === pr.id ? '<span class="dm">Decision maker</span>' : ''}</div>
+        <div class="ti">${esc(pr.t || '')}${pr.id === topFit(co) && ft.why ? `<span class="why">· best person to call</span>` : ''}</div></div>
+        <div class="office">${mainPh ? `<small>${esc(mainPh[0])}</small><b>${esc(mainPh[1])}</b>` : '<small>No number yet</small>'}</div></div>
+      <div class="who-meta">${restPh.map(([k,v]) => `<span class="mi"><small>${esc(k)}</small><span class="v">${esc(v)}</span><button class="cp" data-copy="${esc(v)}">Copy</button></span>`).join('')}
+        ${pr.e ? `<span class="mi"><small>Email</small><a href="mailto:${esc(pr.e)}">${esc(pr.e)}</a><button class="cp" data-copy="${esc(pr.e)}">Copy</button></span>` : '<span class="mi"><small>No email</small></span>'}</div>
+      <div class="plinks">${pr.li ? `<a class="link" href="${esc(pr.li)}" target="_blank" rel="noopener">${ic('li')}LinkedIn</a>` : ''}<button class="link" data-edit-person="${pr.id}">${ic('edit')}Edit contact</button><button class="link" data-dm="${pr.id}">${ic('star')}${a.dm === pr.id ? 'Remove decision maker' : 'Mark as decision maker'}</button><span class="muted" style="margin-left:auto">${last.lastOutcome ? 'Last: ' + esc(OMAP[last.lastOutcome]?.t || last.lastOutcome) + ', ' + fmtTs(last.lastTs) : 'Not called yet'}</span></div>
     </section>
 
-    <section class="card step"><div class="step-h"><b>2</b>What happened?</div>
+    <section class="card step outc"><div class="step-h"><b>2</b>What happened?</div>
       <div class="og"><small>Didn't get through</small><div class="outs">${OUTCOMES.filter(o => !o.connect).map(chip).join('')}</div></div>
       <div class="og"><small>Spoke to someone</small><div class="outs">${OUTCOMES.filter(o => o.connect).map(chip).join('')}</div></div>
       <textarea id="note" rows="3" spellcheck="true" lang="en-GB" placeholder="Notes: who you spoke to, what they said">${esc(form.note)}</textarea>
@@ -210,15 +236,22 @@ function rAccounts(){
     <div class="box"><h4>Follow-up</h4>
       <div class="fu-row"><input type="date" id="fuD" value="${esc(form.fuDate)}" min="${today()}" aria-label="Follow-up date"><input type="time" id="fuT" value="${esc(form.fuTime)}" aria-label="Follow-up time"></div>
       <textarea id="fuN" rows="3" spellcheck="true" lang="en-GB" placeholder="What to say or send next time">${esc(form.fuNote)}</textarea>
-      <p class="fu-sum">${fuSum || 'Pick a date and it saves with the call.'}</p></div>
+      <p class="fu-sum">${fuSum || 'Pick a date and it saves with the call. Call back and Interested get the next working day if you leave it blank.'}</p></div>
     ${fold('obj', 'If they say…', null, OBJ_HTML, true)}
     ${fold('hist', 'History', log.length, timeline, true)}
   </aside></div>`;
   bindAccounts(co, pr);
+  document.querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copyText(b.dataset.copy, b));
 }
+function copyText(t, btn){ const ok = () => { btn.textContent = 'Copied'; setTimeout(() => { btn.textContent = 'Copy'; }, 1500); };
+  try{ navigator.clipboard.writeText(t).then(ok, () => fallbackCopy(t) && ok()); }catch(e){ if(fallbackCopy(t)) ok(); } }
+function fallbackCopy(t){ const x = document.createElement('textarea'); x.value = t; document.body.append(x); x.select(); let r = false; try{ r = document.execCommand('copy'); }catch(e){} x.remove(); if(!r) toast('Select the text and press Ctrl+C'); return r; }
+function nextWorkday(){ const d = new Date(); do{ d.setDate(d.getDate() + 1); }while(d.getDay() === 0 || d.getDay() === 6); return dayKey(d); }
 '''
 s = s[:start] + NEW_RACC + s[end:]
 s = s.replace('const BRIEFS = ', 'const OBJ_HTML = ' + __import__('json').dumps('<div class="obj">' + obj_html + '</div>') + ';\nconst BRIEFS = ', 1)
+s = s.replace("  if(form.fuDate){ patch.followUp", "  if(!form.fuDate && ['Call Back','Interested'].includes(form.outcome)) form.fuDate = nextWorkday();\n  if(form.fuDate){ patch.followUp", 1)
+assert 'nextWorkday();\n  if(form.fuDate)' in s
 a = s.index('function briefHTML(co){'); b = s.index('function insightHTML(co){')
 s = s[:a] + r'''function briefHTML(co){
   const b = BR(co.key); if(!b) return '';
