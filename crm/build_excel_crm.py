@@ -7,7 +7,6 @@ from openpyxl.chart import BarChart, Reference
 from openpyxl.comments import Comment
 
 OUT=sys.argv[1]
-NL=1000; NG=3000   # lead rows, log rows
 F='Arial'
 TEAL='0F766E'; GRAY='EEF2F1'; YEL='FFF4C2'
 hdr_font=Font(name=F,bold=True,color='FFFFFF'); hdr_fill=PatternFill('solid',fgColor=TEAL)
@@ -44,65 +43,81 @@ lists.freeze_panes='A2'
 OUTC="Lists!$B$2:$B$11"; OSTAT="Lists!$C$2:$C$11"; OCONN="Lists!$D$2:$D$11"; ODAYS="Lists!$E$2:$E$11"
 SNAME="Lists!$G$2:$G$9"; SCLOSED="Lists!$H$2:$H$9"
 
+# ---------- Leads data ----------
+import pandas as pd
+SRC=sys.argv[2]
+df=pd.read_excel(SRC,dtype=str)
+clean=lambda v: None if pd.isna(v) or not str(v).strip() else str(v).strip().lstrip("'").strip()
+df=df.apply(lambda col: col.map(clean))
+df['key']=df['First Name'].fillna('')+' '+df['Last Name'].fillna('')+' ('+df['Company Name for Emails'].fillna('')+')'
+before=len(df); df=df.drop_duplicates('key'); DUPES=before-len(df)
+df['best']=df['Mobile Phone'].fillna(df['Corporate Phone']).fillna(df['Other Phone'])
+df=df.sort_values(['Company Name for Emails','Last Name','First Name'],key=lambda c:c.str.lower())
+print('contacts',len(df),'dupes removed',DUPES)
+NL=max(2000,len(df)+300); NG=4000
+
 # ---------- Call Log ----------
-headers(log,['Date','Time','Caller','Business (pick from list)','Phone (auto)','Outcome','Notes','Follow-up date (optional)'],[12,10,14,32,17,16,45,16])
+headers(log,['Date','Time','Caller','Contact (pick from list)','Company (auto)','Phone (auto)','Outcome','Notes','Follow-up date (optional)'],[12,10,14,36,24,18,16,45,16])
 L=lambda col:f"'Call Log'!${col}$2:${col}${NG+1}"
 for r in range(2,NG+2):
-    log.cell(r,1).number_format='yyyy-mm-dd'; log.cell(r,2).number_format='h:mm AM/PM'; log.cell(r,8).number_format='yyyy-mm-dd'
-    e=log.cell(r,5,f'=IF(D{r}="","",IFERROR(INDEX(Leads!$B$2:$B${NL+1},MATCH(D{r},Leads!$A$2:$A${NL+1},0)),""))'); e.fill=calc_fill
-log['A2']=dt.date(2026,11,16); log['B2']=dt.time(9,30); log['C2']='Caller 1'; log['D2']='EXAMPLE - Smith Roofing LLC'
-log['F2']='Voicemail'; log['G2']='EXAMPLE row - left message for owner, delete me'
-for dv in [DataValidation(type='list',formula1='=Lists!$A$2:$A$16',allow_blank=True),
-           DataValidation(type='list',formula1=f'=Leads!$A$2:$A${NL+1}',allow_blank=True),
-           DataValidation(type='list',formula1=f'={OUTC}',allow_blank=True)]:
-    log.add_data_validation(dv)
-log.data_validations.dataValidation[0].add(f'C2:C{NG+1}')
-log.data_validations.dataValidation[1].add(f'D2:D{NG+1}')
-log.data_validations.dataValidation[2].add(f'F2:F{NG+1}')
-log.freeze_panes='A2'; log.auto_filter.ref=f'A1:H{NG+1}'
-log['A1'].comment=Comment('Tip: Ctrl+; enters today\'s date, Ctrl+Shift+; enters the time.','Dial Desk')
+    log.cell(r,1).number_format='yyyy-mm-dd'; log.cell(r,2).number_format='h:mm AM/PM'; log.cell(r,9).number_format='yyyy-mm-dd'
+    for c,col in ((5,'F'),(6,'B')):
+        e=log.cell(r,c,f'=IF($D{r}="","",IFERROR(INDEX(Leads!${col}$2:${col}${NL+1},MATCH($D{r},Leads!$A$2:$A${NL+1},0)),""))'); e.fill=calc_fill
+for dv,rng in [(DataValidation(type='list',formula1='=Lists!$A$2:$A$16',allow_blank=True),f'C2:C{NG+1}'),
+           (DataValidation(type='list',formula1=f'=Leads!$A$2:$A${NL+1}',allow_blank=True),f'D2:D{NG+1}'),
+           (DataValidation(type='list',formula1=f'={OUTC}',allow_blank=True),f'G2:G{NG+1}')]:
+    log.add_data_validation(dv); dv.add(rng)
+log.freeze_panes='A2'; log.auto_filter.ref=f'A1:I{NG+1}'
+log['A1'].comment=Comment("Tip: Ctrl+; enters today's date, Ctrl+Shift+; enters the time.",'CRM')
 
 # ---------- Leads ----------
-cols=['Business','Phone','City','State','Decision maker','Role','Email','Address','Google Maps link','Notes',
+cols=['Contact','Best phone','First name','Last name','Title','Company','Mobile','Office phone','Other phone','Email','LinkedIn','Website','Notes',
       'Calls','Last call','Last outcome','Last caller','Status','Next follow-up','Call now?']
-headers(leads,cols,[32,17,14,7,18,12,24,30,18,30,7,12,15,13,12,14,11])
-for c in range(11,18): leads.cell(1,c).fill=PatternFill('solid',fgColor='134E4A')
+headers(leads,cols,[34,17,12,14,34,26,17,17,15,30,14,22,30,7,12,15,13,12,14,11])
+for c in range(14,21): leads.cell(1,c).fill=PatternFill('solid',fgColor='134E4A')
 last=lambda col,r:f"LOOKUP(2,1/({L('D')}=$A{r}),{L(col)})"
+link=Font(name=F,size=10,color='1D4ED8',underline='single')
+for i,row in enumerate(df.itertuples(index=False),2):
+    S_=lambda v: v if isinstance(v,str) else None
+    vals=[row.key,row.best,row._0,row._1,row.Title,row._3,row._5,row._6,row._7,row.Email,row._8,row.Website,None]
+    vals=[S_(v) for v in vals]
+    for c,v in enumerate(vals,1):
+        x=leads.cell(i,c,v)
+        if c in (2,7,8,9): x.number_format='@'
+    if S_(row._8): leads.cell(i,11).value='Profile'; leads.cell(i,11).hyperlink=row._8; leads.cell(i,11).font=link
+    if S_(row.Website): leads.cell(i,12).hyperlink=row.Website; leads.cell(i,12).font=link
 for r in range(2,NL+2):
     f={
-    11:f'=IF($A{r}="","",COUNTIF({L("D")},$A{r}))',
-    12:f'=IF(OR($A{r}="",K{r}=0),"",_xlfn.MAXIFS({L("A")},{L("D")},$A{r}))',
-    13:f'=IF(OR($A{r}="",K{r}=0),"",{last("F",r)})',
-    14:f'=IF(OR($A{r}="",K{r}=0),"",{last("C",r)})',
-    15:f'=IF($A{r}="","",IF(K{r}=0,"New",IFERROR(INDEX({OSTAT},MATCH(M{r},{OUTC},0)),"Attempting")))',
-    16:f'=IF(OR($A{r}="",K{r}=0),"",IF(INDEX({SCLOSED},MATCH(O{r},{SNAME},0))="Yes","",IF(N({last("H",r)})>0,{last("H",r)},L{r}+IFERROR(INDEX({ODAYS},MATCH(M{r},{OUTC},0)),1))))',
-    17:f'=IF($A{r}="","",IF(INDEX({SCLOSED},MATCH(O{r},{SNAME},0))="Yes","Done",IF(OR(P{r}="",P{r}<=TODAY()),"Call now","Later")))',
+    14:f'=IF($A{r}="","",COUNTIF({L("D")},$A{r}))',
+    15:f'=IF(OR($A{r}="",N{r}=0),"",_xlfn.MAXIFS({L("A")},{L("D")},$A{r}))',
+    16:f'=IF(OR($A{r}="",N{r}=0),"",{last("G",r)})',
+    17:f'=IF(OR($A{r}="",N{r}=0),"",{last("C",r)})',
+    18:f'=IF($A{r}="","",IF(N{r}=0,"New",IFERROR(INDEX({OSTAT},MATCH(P{r},{OUTC},0)),"Attempting")))',
+    19:f'=IF(OR($A{r}="",N{r}=0),"",IF(INDEX({SCLOSED},MATCH(R{r},{SNAME},0))="Yes","",IF(N({last("I",r)})>0,{last("I",r)},O{r}+IFERROR(INDEX({ODAYS},MATCH(P{r},{OUTC},0)),1))))',
+    20:f'=IF($A{r}="","",IF(INDEX({SCLOSED},MATCH(R{r},{SNAME},0))="Yes","Done",IF(OR(S{r}="",S{r}<=TODAY()),"Call now","Later")))',
     }
     for c,v in f.items():
         x=leads.cell(r,c,v); x.fill=calc_fill
-    leads.cell(r,12).number_format='yyyy-mm-dd'; leads.cell(r,16).number_format='yyyy-mm-dd'
-for c,v in enumerate(['EXAMPLE - Smith Roofing LLC','(555) 010-1234','Austin','TX','','','','','','EXAMPLE row - replace with your leads'],1):
-    leads.cell(2,c,v or None)
-leads.freeze_panes='B2'; leads.auto_filter.ref=f'A1:Q{NL+1}'
-rng=f'A2:Q{NL+1}'
+    leads.cell(r,15).number_format='yyyy-mm-dd'; leads.cell(r,19).number_format='yyyy-mm-dd'
+leads.freeze_panes='B2'; leads.auto_filter.ref=f'A1:T{NL+1}'
 for txt,col in [('Call now','DCFCE7'),('Later','FEF3C7'),('Done','E5E7EB')]:
-    leads.conditional_formatting.add(f'Q2:Q{NL+1}',CellIsRule(operator='equal',formula=[f'"{txt}"'],fill=PatternFill('solid',fgColor=col)))
+    leads.conditional_formatting.add(f'T2:T{NL+1}',CellIsRule(operator='equal',formula=[f'"{txt}"'],fill=PatternFill('solid',fgColor=col)))
 for txt,col in [('Interested','DCFCE7'),('Meeting','BBF7D0'),('Won','86EFAC'),('Callback','FEF3C7'),('Lost','FEE2E2'),('DNC','FECACA')]:
-    leads.conditional_formatting.add(f'O2:O{NL+1}',CellIsRule(operator='equal',formula=[f'"{txt}"'],fill=PatternFill('solid',fgColor=col)))
+    leads.conditional_formatting.add(f'R2:R{NL+1}',CellIsRule(operator='equal',formula=[f'"{txt}"'],fill=PatternFill('solid',fgColor=col)))
 leads.conditional_formatting.add(f'A2:A{NL+1}',FormulaRule(formula=[f'AND($A2<>"",COUNTIF($A$2:$A${NL+1},$A2)>1)'],fill=PatternFill('solid',fgColor='FECACA')))
 
 # ---------- Today ----------
 ws=today
 for col,w in zip('ABCDEFGH',[22,14,14,14,14,16,16,4]): ws.column_dimensions[col].width=w
-ws['A1']='Cold Calling - Today'; ws['A1'].font=Font(name=F,size=18,bold=True,color=TEAL)
+ws['A1']='Indoor Sales - Today'; ws['A1'].font=Font(name=F,size=18,bold=True,color=TEAL)
 ws['A2']='Updates by itself from the Call Log. Nothing to type on this sheet.'; ws['A2'].font=Font(name=F,size=10,italic=True,color='5D6B67')
 ws['A3']='Date'; ws['B3']='=TODAY()'; ws['B3'].number_format='dddd, mmm d'
 ws['C3']='Week starts'; ws['D3']='=B3-WEEKDAY(B3,2)+1'; ws['D3'].number_format='mmm d'
 D="$B$3"; W="$D$3"
-conn_today=f'SUMPRODUCT(COUNTIFS({L("A")},{D},{L("F")},{OUTC})*({OCONN}="Yes"))'
+conn_today=f'SUMPRODUCT(COUNTIFS({L("A")},{D},{L("G")},{OUTC})*({OCONN}="Yes"))'
 tiles=[('Dials',f'=COUNTIF({L("A")},{D})','0'),('Connects',f'={conn_today}','0'),
-       ('Connect rate',f'=IFERROR(B6/A6,0)','0%'),('Meetings',f'=COUNTIFS({L("A")},{D},{L("F")},"Meeting booked")','0'),
-       ('Ready to call',f'=COUNTIF(Leads!$Q$2:$Q${NL+1},"Call now")','0')]
+       ('Connect rate',f'=IFERROR(B6/A6,0)','0%'),('Meetings',f'=COUNTIFS({L("A")},{D},{L("G")},"Meeting booked")','0'),
+       ('Ready to call',f'=COUNTIF(Leads!$T$2:$T${NL+1},"Call now")','0')]
 for i,(lab,fm,nf) in enumerate(tiles):
     c=ws.cell(5,1+i,lab); c.font=Font(name=F,size=10,bold=True,color='5D6B67')
     v=ws.cell(6,1+i,fm); v.font=Font(name=F,size=24,bold=True,color=TEAL); v.number_format=nf
@@ -117,11 +132,11 @@ for k in range(15):
     r=10+k; lr=2+k
     ws.cell(r,1,f'=IF(Lists!A{lr}="","",Lists!A{lr})')
     ws.cell(r,2,f'=IF($A{r}="","",COUNTIFS({L("A")},{D},{L("C")},$A{r}))')
-    ws.cell(r,3,f'=IF($A{r}="","",SUMPRODUCT(COUNTIFS({L("A")},{D},{L("C")},$A{r},{L("F")},{OUTC})*({OCONN}="Yes")))')
-    ws.cell(r,4,f'=IF($A{r}="","",COUNTIFS({L("A")},{D},{L("C")},$A{r},{L("F")},"Meeting booked"))')
+    ws.cell(r,3,f'=IF($A{r}="","",SUMPRODUCT(COUNTIFS({L("A")},{D},{L("C")},$A{r},{L("G")},{OUTC})*({OCONN}="Yes")))')
+    ws.cell(r,4,f'=IF($A{r}="","",COUNTIFS({L("A")},{D},{L("C")},$A{r},{L("G")},"Meeting booked"))')
     c=ws.cell(r,5,f'=IF($A{r}="","",IFERROR(C{r}/B{r},0))'); c.number_format='0%'
     ws.cell(r,6,f'=IF($A{r}="","",COUNTIFS({L("A")},">="&{W},{L("A")},"<="&{D},{L("C")},$A{r}))')
-    ws.cell(r,7,f'=IF($A{r}="","",COUNTIFS({L("A")},">="&{W},{L("A")},"<="&{D},{L("C")},$A{r},{L("F")},"Meeting booked"))')
+    ws.cell(r,7,f'=IF($A{r}="","",COUNTIFS({L("A")},">="&{W},{L("A")},"<="&{D},{L("C")},$A{r},{L("G")},"Meeting booked"))')
     for c in range(1,8): ws.cell(r,c).border=Border(bottom=thin)
 ws.conditional_formatting.add('B10:B24',FormulaRule(formula=['AND(ISNUMBER(B10),B10=MAX($B$10:$B$24),B10>0)'],fill=PatternFill('solid',fgColor='DCFCE7'),font=Font(name=F,bold=True)))
 ws['A27']='Pipeline (all leads)'; ws['A27'].font=Font(name=F,size=13,bold=True)
@@ -129,7 +144,7 @@ for i,(s,_) in enumerate(STAT):
     c=ws.cell(28,1+i if i<7 else 1,None)
 for i,(s,_) in enumerate(STAT):
     r=29+i
-    ws.cell(r,1,s); ws.cell(r,2,f'=COUNTIF(Leads!$O$2:$O${NL+1},A{r})')
+    ws.cell(r,1,s); ws.cell(r,2,f'=COUNTIF(Leads!$R$2:$R${NL+1},A{r})')
     for c in (1,2): ws.cell(r,c).border=Border(bottom=thin)
 ws.cell(28,1,'Status').font=hdr_font; ws.cell(28,1).fill=hdr_fill
 ws.cell(28,2,'Leads').font=hdr_font; ws.cell(28,2).fill=hdr_fill
@@ -145,16 +160,15 @@ ws.freeze_panes='A4'
 
 # ---------- Start Here ----------
 s=start; s.column_dimensions['A'].width=4; s.column_dimensions['B'].width=95
-lines=[('Cold Calling CRM','t'),('',''),
+lines=[('Indoor Sales CRM','t'),('',''),
 ('SET UP (once)','h'),
 ('1. Save this file to OneDrive or SharePoint, then click Share so your team can open it.',''),
 ('2. Go to the Lists tab and replace Caller 1, 2, 3 with your team\'s names (yellow cells).',''),
-('3. Go to the Leads tab and paste your leads into columns A-J (Business, Phone, City, State...).',''),
-('4. Delete the two rows that start with EXAMPLE (one in Leads, one in Call Log).',''),
+('3. Your leads are already loaded in the Leads tab. To add more, fill columns A-M (Contact must be unique).',''),
 ('',''),
 ('EVERY CALL','h'),
-('1. Leads tab: filter "Call now?" to show Call now. Pick a lead.',''),
-('2. Call Log tab: add one row - Date, Time, your name, pick the Business, pick the Outcome.',''),
+('1. Leads tab: filter "Call now?" to show Call now. Pick a contact and dial the Best phone (mobile first).',''),
+('2. Call Log tab: add one row - Date, Time, your name, pick the Contact (type to search), pick the Outcome.',''),
 ('3. That\'s it. Status, follow-up date and the Today dashboard update by themselves.',''),
 ('',''),
 ('WHAT TO TYPE','h'),
@@ -169,7 +183,7 @@ lines=[('Cold Calling CRM','t'),('',''),
 ('Type your own date in "Follow-up date" in the Call Log to override. Change the default days in Lists.',''),
 ('Meeting booked, Deal won, Not interested, Wrong number, Do not call: lead is Done and leaves the queue.',''),
 ('',''),
-('Holds up to 1,000 leads and 3,000 calls.','n'),
+(f'Holds up to {NL:,} contacts and {NG:,} calls. Phone numbers are stored as text so the + is kept.','n'),
 ]
 for i,(t,k) in enumerate(lines,1):
     c=s.cell(i,2,t)

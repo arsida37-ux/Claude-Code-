@@ -1,0 +1,182 @@
+# key|casual name|segment|what they do|delivery hook
+aar government services|AAR|MRO & logistics|US aviation services group; the UK arm supports military aircraft fleets with parts supply, repair and logistics.|Grounded aircraft and repair turnarounds depend on parts arriving fast, often out of hours.
+accrofab|Accrofab|Precision engineering|Sheet metal and machined parts for aerospace and defence, supplying primes like BAE and Airbus.|Late parts hold up customer assembly lines, so recovery shipments matter.
+ads group|ADS|Trade body|The UK trade association for aerospace, defence, security and space companies.|Not a buyer itself; useful for event logistics and introductions to members.
+aeromet international|Aeromet|Materials & castings|Aluminium castings and machined parts for aerospace and defence programmes.|Castings shipped late to primes can stop an aircraft line, so rescue moves happen.
+aerospace & airworthiness consultancy enterprises|AACE|Services & consultancy|Airworthiness and certification consultancy for aerospace operators and manufacturers.|Moves documents and test samples; small volumes but time-critical around audits.
+aerospace metal finishers|AMF|Materials & castings|Surface treatment and finishing of aerospace metal parts (anodising, plating, painting).|Parts come in and go back out to tight slots; a missed slot delays the customer.
+airbus|Airbus|Prime|Europe's biggest aerospace group; UK sites build wings at Broughton and Filton, plus defence and space at Stevenage.|Line-stopping parts shortages and AOG events need dedicated same-day vans.
+airbus operations|Airbus|Prime|Airbus's commercial aircraft business, with UK wing design and manufacture at Filton and Broughton.|Wing production runs on tight sequencing; a single missing part can stop the line.
+airtanker services|AirTanker|MRO & logistics|Runs the RAF Voyager tanker and transport fleet from Brize Norton.|Spares for a grounded Voyager are classic AOG work, often nights and weekends.
+alford|Alford|Energetics & EOD|Alford Technologies makes explosive charges and tools for bomb disposal teams.|Moving controlled goods needs vetted, careful drivers; reliability is key.
+allen-vanguard|Allen-Vanguard|Electronics & EW|Counter-IED electronic jammers and protection systems for military and police.|Urgent kit for deployments and trials, sometimes to bases at short notice.
+amsafe bridport|AmSafe Bridport|Tier 1 supplier|Aircraft cargo nets, restraint systems and defence textiles from Dorset.|Airline and military customers need replacement nets fast when aircraft are grounded.
+anduril industries uk|Anduril|Uncrewed & autonomy|UK arm of the US defence tech firm building autonomous drones and surveillance systems.|Fast-moving trials and demos mean kit has to be on site the same day.
+av optics|AV Optics|Electronics & sensors|Supplies thermal imaging and night vision equipment to defence and security users.|Demo kit and urgent replacements for police and military customers.
+awe plc|AWE|Prime|Atomic Weapons Establishment at Aldermaston and Burghfield; designs and maintains the UK nuclear deterrent.|High-security site; vetted drivers and reliable timed deliveries matter more than price.
+babcock international group plc|Babcock|Prime|Major UK defence engineering group: naval dockyards, submarine support, land vehicle and aircraft support.|Dockyard and fleet support needs urgent parts moves between sites at all hours.
+bae systems plc|BAE|Prime|The UK's largest defence company: Typhoon, F-35 parts, submarines at Barrow, ships on the Clyde.|Huge supply chain with constant urgent moves between sites and suppliers.
+bcb international|BCB|Equipment & clothing|Cardiff firm making survival, protective and field equipment for armed forces.|Rush orders for exercises and deployments need to ship the same day.
+bikar aerospace metals|Bikar|Materials & castings|Stockholder of aerospace-grade metals (aluminium, titanium, steel) cut to size.|Customers ring for urgent material to keep machines running; speed wins orders.
+blighter surveillance|Blighter|Electronics & sensors|Cambridge maker of ground surveillance and counter-drone radar.|Export shipments, demos and urgent repairs to customers and airports.
+blue bear systems research|Blue Bear|Uncrewed & autonomy|Bedford developer of drone swarms and autonomous systems for defence.|Trials kit moving to ranges at short notice.
+bmt|BMT|Naval|Naval architecture and engineering consultancy behind many Royal Navy ship designs.|Mostly documents and test equipment; occasional urgent site moves.
+boeing distribution services|Boeing Distribution|MRO & logistics|Boeing's parts distribution arm (formerly KLX), supplying fasteners and consumables to aerospace makers.|Their customers' lines stop without small parts, so same-day top-ups are common.
+brookhouse aerospace|Brookhouse|Precision engineering|Precision machining and fabrication for aerospace and defence customers.|Late components to primes often need a dedicated van to save a delivery slot.
+caci|CACI|Software & intelligence|US defence IT and intelligence contractor with UK operations.|Secure hardware and data moves between sites; timing and chain of custody matter.
+calian uk|Calian|Training & services|Military training and simulation services provider.|Training kit moved to exercise locations, often at short notice.
+callen-lenz associates|Callen-Lenz|Uncrewed & autonomy|Develops drones and uncrewed aircraft for military and civil use.|Prototype parts and trial kit to ranges.
+captec group plc|Captec|Electronics & sensors|Rugged and embedded computers for defence, aerospace and rail.|Repair turnarounds and urgent build parts.
+cds defence & security|CDS|Security & protection|Armour and protective products for defence and security.|Urgent orders for deployments and exercises.
+cellebrite uk|Cellebrite|Software & intelligence|Digital forensics tools used by police and defence to extract phone data.|Urgent hardware swaps for forces mid-investigation.
+chelton|Chelton|Electronics & sensors|Antennas and communication systems for military and civil aircraft (part of Cobham Ultra).|AOG antennas and urgent test units.
+chemring energetics uk|Chemring Energetics|Energetics & EOD|Makes energetic materials, flares and pyrotechnics in Scotland.|Dangerous goods expertise is the angle; ADR-trained drivers.
+chemring group plc|Chemring|Energetics & EOD|Group making countermeasures, energetics and sensors; Roke is part of it.|Mixed hazardous and electronics moves across UK sites.
+chess dynamics|Chess Dynamics|Electronics & sensors|Sussex maker of electro-optic tracking and surveillance systems for naval and land platforms.|Urgent parts to shipyards and trial sites.
+clarion defence|Clarion|Events|Runs DSEI and other defence events.|Show build and exhibitor kit; hard deadlines around show dates.
+collins aerospace|Collins|Tier 1 supplier|RTX business making avionics, landing gear, seating, actuation; many UK sites.|AOG and line-side shortages drive constant urgent moves.
+conjay collectors ammunition company|Conjay|Energetics & EOD|Specialist ammunition business.|Controlled goods; needs a courier that understands paperwork and security.
+cooneen defence|Cooneen|Equipment & clothing|Northern Ireland maker of military clothing and protective wear.|Urgent sizes and samples for contracts and trials.
+crfs|CRFS|Electronics & EW|Cambridge maker of RF spectrum monitoring and geolocation systems.|Demos, exports and urgent repairs.
+delian alliance industries uk|Delian|Uncrewed & autonomy|New defence tech firm building autonomous systems.|Start-up pace: trials and demos at short notice.
+dtc|DTC|Electronics & sensors|Defence electronics and communications supplier.|Urgent parts and repairs for customers.
+dynamic metals|Dynamic Metals|Materials & castings|Supplier of aerospace-grade aluminium and other metals.|Same-day material for machine shops chasing deadlines.
+elbit systems uk|Elbit UK|Prime|UK arm of Israel's Elbit: training, electronics and land systems.|Moves between UK sites and to MOD customers.
+energetics technology|ETL|Energetics & EOD|Specialist in munitions and energetics.|Controlled and hazardous goods; vetted drivers.
+evolve dynamics|Evolve|Uncrewed & autonomy|UK maker of surveillance drones for police, fire and defence.|Urgent replacement drones and parts for live operations.
+farsound|Farsound|MRO & logistics|Aircraft component repair and spares supply.|Classic AOG work: a part needed today to get an aircraft flying.
+flare bright|Flare Bright|Uncrewed & autonomy|Drone navigation tech that works without GPS.|Trials kit and urgent prototype parts.
+forcys|Forcys|Electronics & sensors|Defence systems integrator and distributor (part of the Kongsberg/Motorola ecosystem).|Urgent kit to defence users and trials.
+gardaworld|GardaWorld|Security & protection|International security services company.|Urgent equipment moves between sites.
+gardner aerospace|Gardner|Precision engineering|Detail parts and assemblies for Airbus and other aerostructures customers.|Late parts to Airbus lines often need dedicated vans.
+ge aviation|GE Aerospace|Tier 1 supplier|Jet engine and systems maker with UK sites in Cheltenham and Wales (engine overhaul at Nantgarw).|Engine overhaul turnarounds rely on urgent parts.
+general dynamics uk|GD UK|Prime|Builds Ajax armoured vehicles in Merthyr Tydfil and military communications.|Vehicle programme parts between suppliers and the Merthyr site.
+gkn aerospace|GKN|Tier 1 supplier|Aerostructures and engine parts; UK sites at Filton, Cowes and Luton.|Line-side shortages and customer deliveries to Airbus and engine makers.
+hensoldt uk|Hensoldt|Electronics & sensors|Radar and sensor maker (formerly Kelvin Hughes), naval and land systems.|Urgent spares for ships and repair turnarounds.
+hycaero|Hycaero|Precision engineering|Aerospace engineering and component supplier.|Late parts to customers need rescue moves.
+ids ingegneria dei sistemi|IDS|Electronics & sensors|Radar and electromagnetic engineering specialists.|Test equipment and urgent kit to trials.
+igne uxo|Igne|Energetics & EOD|Unexploded ordnance clearance and survey specialists.|Kit to sites around the UK at short notice.
+inzpire|Inzpire|Training & services|Mission systems and aircrew training for the RAF and partners.|Kit and documents to bases.
+irvingq|IrvinGQ|Equipment & clothing|Parachutes and aerial delivery systems for militaries.|Urgent orders for exercises and deployments.
+itp aero uk|ITP Aero|MRO & logistics|Engine component maker and engine overhaul (formerly Rolls-Royce's partner).|Engine shop turnarounds need parts the same day.
+iturri|Iturri|Equipment & clothing|Protective equipment and fire and rescue vehicles for defence and emergency services.|Urgent kit for live operations.
+janes group uk|Janes|Software & intelligence|Defence intelligence and data publisher.|Low volume; event and document moves.
+jfd|JFD|Naval|Submarine rescue and commercial diving systems.|Urgent spares to ships and bases, sometimes for international moves.
+jj churchill|JJ Churchill|Precision engineering|Leicestershire maker of aero engine blades and precision parts.|Parts to Rolls-Royce and other engine customers on tight schedules.
+kirintec|Kirintec|Electronics & EW|Counter-IED and counter-drone electronic systems.|Trials and urgent deployment kit.
+knds uk|KNDS UK|Prime|Land systems (formerly Rheinmetall/KMW joint work), armoured vehicles and support.|Vehicle parts and urgent repair moves.
+kraken technology group|Kraken|Naval|Underwater sonar and robotics for defence.|Kit to ports and trials at short notice.
+l3harris technologies uk|L3Harris|Prime|US defence prime; UK sites in communications, aircraft training and electronics.|Moves between sites and customers.
+leidos|Leidos|Services & consultancy|Runs MOD logistics contracts and IT services.|Knows logistics; pitch as reliable backup for urgent moves.
+leonardo|Leonardo|Prime|Helicopters in Yeovil and electronics/radar in Edinburgh, Luton and Southampton.|AOG helicopter parts and urgent electronics moves between sites.
+lincad|Lincad|Electronics & sensors|Surrey maker of military batteries and chargers.|Lithium batteries need dangerous-goods handling; that's the angle.
+livewire digital|Livewire|Software & intelligence|Tactical communications software for defence networks.|Hardware for trials and exercises.
+malloy aeronautics|Malloy|Uncrewed & autonomy|Heavy-lift drones (now part of BAE Systems).|Trial kit and parts to ranges.
+marlborough communications|Marlborough|Electronics & EW|Supplier of comms, EW and surveillance equipment to defence.|Urgent kit to customers and exercises.
+martin-baker aircraft company|Martin-Baker|Tier 1 supplier|World leader in ejection seats, based in Denham.|Seat parts for grounded jets worldwide; urgent and controlled.
+mbda uk|MBDA|Prime|Missile systems maker; UK sites at Stevenage, Bolton and Filton.|Controlled goods moves between sites and trials ranges.
+mercury computer|Mercury|Electronics & sensors|Rugged processing and electronics for defence.|Repair turnarounds and urgent build parts.
+middlesex aerospace|Middlesex|Precision engineering|Precision machined parts and assemblies for aerospace and defence.|Late parts to primes need rescue moves.
+moog space & defense|Moog|Tier 1 supplier|Motion control and actuation for aircraft, missiles and spacecraft.|Urgent parts to customers' lines.
+mott macdonald|Mott MacDonald|Services & consultancy|Engineering consultancy working on MOD and defence infrastructure.|Mostly documents and samples; occasional urgent site moves.
+msm aerospace fabricators|MSM|Precision engineering|Sheet metal and fabricated parts for aerospace.|Late parts to customers' lines.
+nasmyth group|Nasmyth|Precision engineering|Group of precision engineering firms supplying aerospace and defence.|Parts moving between group sites and to customers.
+navantia uk|Navantia UK|Naval|Owns the Harland & Wolff yards (Belfast, Appledore) building Royal Navy support ships.|Shipyard parts and urgent moves between yards.
+nioa uk|NIOA|Energetics & EOD|Munitions supplier (owns Barrett and Australian munitions businesses).|Controlled goods; vetted handling.
+northrop grumman|Northrop|Prime|US defence prime; UK work in mission systems and air defence.|Moves between sites and customers.
+ontic engineering & manufacturing|Ontic|MRO & logistics|Supports legacy aircraft parts and repairs (Cheltenham).|AOG parts for older aircraft fleets worldwide.
+openworks engineering|OpenWorks|Electronics & sensors|Makes the SkyWall counter-drone net launcher.|Demo and urgent kit for events and police.
+oxley developments company|Oxley|Electronics & sensors|Cumbria maker of lighting, LEDs and electronic components for aircraft and military vehicles.|Urgent parts to aircraft builders and MRO.
+pall aerospace|Pall|Tier 1 supplier|Filtration systems for aircraft and military vehicles.|Urgent filters for grounded aircraft.
+parkeray lite|Parkeray|Precision engineering|Engineering supplier to defence programmes.|Late parts to customers.
+pentenamio|Pentenamio|Services & consultancy|Defence technology and services business.|Kit and documents to sites.
+permali gloucester|Permali|Materials & castings|Composite armour and materials for defence and industry.|Urgent panels and parts for vehicle programmes.
+pratt & whitney|Pratt & Whitney|Tier 1 supplier|Jet engine maker (RTX); UK MRO and parts.|Engine AOG parts.
+primetake|Primetake|Energetics & EOD|Precision small arms ammunition maker.|Controlled goods; vetted handling.
+produmax|Produmax|Precision engineering|Precision machining for aerospace (Baildon, Yorkshire).|Late parts to aerospace customers.
+qinetiq group plc|QinetiQ|Prime|Defence science and test: runs MOD ranges like Boscombe Down and Hebrides.|Trial kit and spares to remote ranges, often urgent.
+radnor range|Radnor Range|Training & services|Military training range services.|Kit to ranges at short notice.
+raytheon|Raytheon|Prime|RTX defence business; UK sites in Harlow, Broughton and Glenrothes.|Moves between sites and to RAF bases.
+rheinmetall bae systems land|RBSL|Prime|Builds Boxer and Challenger 3 armoured vehicles in Telford.|Vehicle programme parts and urgent supplier moves.
+riskaware|Riskaware|Software & intelligence|Decision support software for CBRN and hazard modelling.|Low volume; documents and hardware.
+roke manor research|Roke|Electronics & EW|Electronics and EW research (part of Chemring), Romsey.|Prototype and trial kit moves.
+rotron aerospace|Rotron|Uncrewed & autonomy|Rotary engines for drones and uncrewed aircraft.|Engines and parts to trial sites.
+rsk ordnance management|RSK Ordnance|Energetics & EOD|Unexploded ordnance management services.|Kit to sites.
+saif autonomy|SAIF|Uncrewed & autonomy|AI and autonomy for defence platforms.|Trial kit moves.
+scott aerospace|Scott Aerospace|Precision engineering|Aerospace engineering supplier.|Late parts to customers.
+seebyte|SeeByte|Naval|Edinburgh developer of underwater autonomy software.|Hardware to trials at ports.
+sigma|Sigma|Precision engineering|Precision components for aerospace engines.|Parts to engine makers on tight schedules.
+sirius insight|Sirius|Software & intelligence|Maritime surveillance and intelligence.|Kit to ports and trials.
+sixworks|Sixworks|Energetics & EOD|EOD and counter-terrorism equipment.|Urgent kit for live operations.
+skylift uav|Skylift|Uncrewed & autonomy|Heavy-lift drones.|Trial kit and parts.
+skyports infrastructure|Skyports|Uncrewed & autonomy|Drone delivery services and vertiports.|They understand logistics; pitch as ground backup.
+smiths detection|Smiths Detection|Security & protection|Threat detection and screening equipment for airports and defence.|Urgent spares to airports where scanners are down.
+spirit aerosystems|Spirit|Tier 1 supplier|Aerostructures maker with a big site in Belfast (wings for Airbus A220).|Line-side shortages and customer deliveries.
+src uk|SRC|Electronics & EW|Electronic warfare and radar.|Trial kit and repairs.
+steatite|Steatite|Electronics & sensors|Rugged computers, batteries and antennas for defence.|Battery DG moves and urgent repairs.
+stirling dynamics|Stirling Dynamics|Services & consultancy|Bristol engineering firm for flight controls and simulation.|Test kit and prototype moves.
+teledyne microwave uk|Teledyne|Electronics & sensors|Microwave components for defence and space.|Urgent parts and repairs.
+thermoteknix|Thermoteknix|Electronics & sensors|Cambridge maker of thermal imaging cameras.|Demo and urgent replacement units.
+thomas jacks|Thomas Jacks|MRO & logistics|Specialist supplier of military vehicle and equipment spares.|Spares to bases and depots, often urgent.
+thompson aero seating|Thompson|Tier 1 supplier|Northern Ireland maker of premium aircraft seats.|Seat parts to airline customers; AOG and line-side.
+thorn sds|Thorn SDS|Security & protection|Security and defence systems provider.|Urgent kit to sites.
+thornton tomasetti defence|Thornton Tomasetti|Services & consultancy|Blast and survivability engineering for defence.|Test samples and documents.
+tkms atlas uk|Atlas UK|Naval|Sonar and naval electronics (Thyssenkrupp Marine Systems).|Spares to ships and bases.
+tods technology|TODS|Materials & castings|Composite and signature management for aircraft and vehicles.|Parts to aircraft and vehicle programmes.
+toray advanced composites uk|Toray|Materials & castings|Carbon fibre composite materials for aerospace and defence.|Temperature-controlled urgent material; cold chain is the angle.
+tp group plc|TP Group|Services & consultancy|Engineering and technology services for defence.|Kit and documents.
+tualcom uk|Tualcom|Electronics & EW|Secure communications and electronics.|Repairs and urgent units.
+turner & townsend uk|Turner & Townsend|Services & consultancy|Project management consultancy on defence infrastructure.|Documents and samples.
+vector aerospace international|Vector|MRO & logistics|Helicopter and engine MRO (now StandardAero), Gosport.|AOG helicopter parts.
+vertical aerospace group|Vertical|Tier 1 supplier|Bristol developer of the VX4 electric air taxi.|Prototype parts on fast timelines.
+wagtail uk|Wagtail|Security & protection|Detection dog services for security and defence.|Low volume; occasional urgent kit moves.
+amulet hotkey|Amulet Hotkey|Electronics & sensors|Secure remote computing hardware used by defence and government.|Urgent replacement units for secure sites.
+chemigraphic|Chemigraphic|Electronics & sensors|Electronics manufacturing for defence, aerospace and industrial customers.|Late PCB builds to customers' lines.
+force|Force Technologies|Electronics & sensors|Engineering and electronics for defence and security.|Urgent kit to customers.
+frazer-nash consultancy|Frazer-Nash|Services & consultancy|Engineering consultancy for MOD, nuclear and defence programmes.|Test kit and documents to sites.
+malvern optical|Malvern Optical|Electronics & sensors|Precision optics for defence and space.|Delicate optics need careful dedicated handling.
+oceaneering international services|Oceaneering|Naval|Subsea engineering and robotics; supports Royal Navy and offshore.|Urgent parts to ports and vessels.
+raptor photonics|Raptor|Electronics & sensors|Northern Ireland maker of high-performance cameras for defence and science.|Urgent units for trials and repairs.
+seaking electrical|SeaKing|Naval|Marine electrical engineering for naval and commercial ships.|Urgent parts to dockyards.
+sens-tech|Sens-Tech|Electronics & sensors|Detectors and sensors for security and defence.|Urgent parts and repairs.
+serco plc|Serco|Services & consultancy|Big public services group; runs defence support contracts for MOD bases and the fleet.|Base support means constant urgent parts and kit moves.
+telesoft|Telesoft|Software & intelligence|Network monitoring and intelligence systems for defence and government.|Secure hardware moves.
+viasat uk|Viasat|Space & satcom|Satellite communications (owns Inmarsat), including secure defence links.|Terminals and spares to bases and ships.
+winslow adaptics|Winslow|Electronics & sensors|Electronic components and interconnects for defence and aerospace.|Urgent parts to customers' lines.
+cavendish nuclear|Cavendish|Naval|Babcock's nuclear business: submarine and nuclear site support.|Secure, vetted moves to nuclear sites.
+merlin circuit technology|Merlin|Electronics & sensors|PCB maker for defence and aerospace (Deeside).|Late boards to customers' builds.
+merlin flex|Merlin Flex|Electronics & sensors|Flexible circuit maker, part of Merlin PCB group.|Late boards to customers' builds.
+contour electronics|Contour|Electronics & sensors|Electronics manufacturing for defence and industrial customers.|Late builds and urgent parts.
+teledyne uk|Teledyne e2v|Electronics & sensors|Chelmsford maker of imaging sensors and RF parts for defence and space.|Delicate parts, urgent repairs.
+harwin|Harwin|Electronics & sensors|Portsmouth maker of high-reliability connectors for aerospace, defence and space.|Urgent connectors to customers' lines.
+all.space|ALL.SPACE|Space & satcom|Builds multi-orbit satellite terminals for defence.|Prototype and demo kit moves.
+avanti communications|Avanti|Space & satcom|Satellite operator providing connectivity, including to defence.|Ground kit and spares.
+axon' cable|Axon' Cable|Electronics & sensors|Cables and connectors for aerospace, defence and space.|Urgent cable assemblies to customers.
+boyce precision engineering|Boyce|Precision engineering|Precision machining for aerospace.|Late parts to customers.
+ceetak|Ceetak|Precision engineering|Seals and polymer parts for aerospace and industry.|Urgent seals for grounded aircraft and lines.
+cross manufacturing|Cross|Precision engineering|Bath maker of brush seals and precision parts for aero engines.|Parts to engine makers on tight schedules.
+eutelsat oneweb|OneWeb|Space & satcom|Low-Earth-orbit satellite network; UK-backed.|Terminals and ground station kit.
+geometric manufacturing|Geometric|Precision engineering|Precision machining for aerospace and defence.|Late parts to customers.
+goonhilly earth station|Goonhilly|Space & satcom|Cornish satellite ground station and deep-space comms.|Urgent ground kit to a remote site.
+grainger & worral|Grainger & Worrall|Materials & castings|Castings for aerospace, defence and motorsport.|Prototype castings on tight timelines.
+inmarsat|Inmarsat|Space & satcom|Satellite comms for ships, aircraft and defence (now Viasat).|Terminals and spares.
+james walker uk|James Walker|Precision engineering|Seals and gaskets for aerospace, defence and industry.|Urgent seals for grounded aircraft and ships.
+magdrive|Magdrive|Space & satcom|Oxfordshire maker of satellite thrusters.|Prototype parts to test sites.
+martin precision|Martin Precision|Precision engineering|Precision machining for aerospace.|Late parts to customers.
+milltech precision engineering|Milltech|Precision engineering|Precision machining for aerospace and defence.|Late parts to customers.
+moyola precision engineering|Moyola|Precision engineering|Northern Ireland aerospace machining for Spirit, Airbus and others.|Late parts to customers.
+perfect bore manufacturing|Perfect Bore|Precision engineering|Precision machining for aerospace.|Late parts to customers.
+plexus|Plexus|Electronics & sensors|Electronics manufacturing including aerospace and defence (Kelso, Livingston).|Late builds to customers.
+reliance high-tech|Reliance|Precision engineering|Precision components and mechanisms for aerospace, defence and medical.|Urgent parts to customers.
+satellite applications catapult|Catapult|Space & satcom|Government-backed space innovation centre at Harwell.|Test kit and events.
+slingshot aerospace|Slingshot|Space & satcom|Space tracking and awareness software.|Low volume; hardware for demos.
+space forge|Space Forge|Space & satcom|Cardiff start-up making materials in orbit.|Prototype parts on fast timelines.
+spaceflux|Spaceflux|Space & satcom|Space surveillance telescopes and data.|Delicate kit moves.
+special quality alloys|SQA|Materials & castings|Stockholder of aerospace alloys.|Same-day material for customers' machines.
+surrey satellite technology|SSTL|Space & satcom|Guildford satellite builder (Airbus-owned).|Delicate, high-value parts and test moves.
+unilathe|Unilathe|Precision engineering|Precision turned parts for aerospace and defence.|Late parts to customers.
+variohm eurosensor|Variohm|Electronics & sensors|Sensors for aerospace, defence and industry.|Urgent parts to customers.
+walker precision engineering|Walker|Precision engineering|Precision machining for aerospace and defence.|Late parts to customers.
+true position robotics|TPR|Precision engineering|Robotic drilling and automation for aerospace assembly.|Urgent parts to customer sites.
+element materials technology|Element|Testing & certification|Materials testing labs for aerospace and defence.|Samples to and from labs on deadlines.
+trigo adr uk|Trigo|Testing & certification|Quality inspection services for aerospace and automotive.|Urgent parts sorting and moves.
