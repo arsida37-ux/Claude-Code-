@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cold Call CRM</title>
+<style>
+:root{
+  --bg:#f6f7f9;--card:#fff;--ink:#16181d;--muted:#6b7280;--line:#e5e7eb;
+  --accent:#2563eb;--accent-ink:#fff;--good:#16a34a;--warn:#d97706;--bad:#dc2626;--soft:#eef2ff;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1115;--card:#181b21;--ink:#e8eaed;--muted:#9aa1ac;--line:#2a2f37;
+  --accent:#3b82f6;--soft:#1e2433;
+}}
+:root[data-theme="dark"]{--bg:#0f1115;--card:#181b21;--ink:#e8eaed;--muted:#9aa1ac;--line:#2a2f37;--accent:#3b82f6;--soft:#1e2433}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;flex-wrap:wrap}
+header h1{font-size:17px;margin:0;margin-right:auto}
+nav{display:flex;gap:4px}
+nav button{background:none;border:0;color:var(--muted);padding:8px 12px;border-radius:8px;font:inherit;cursor:pointer}
+nav button.on{background:var(--soft);color:var(--accent);font-weight:600}
+main{max-width:1100px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button.b{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 12px;border-radius:8px;cursor:pointer}
+button.b:hover{border-color:var(--accent)}
+button.p{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+textarea{min-height:70px;resize:vertical}
+label{font-size:12px;color:var(--muted);display:block;margin:8px 0 4px}
+.muted{color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.stat b{display:block;font-size:26px}
+.stat span{font-size:12px;color:var(--muted)}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:600}
+tr.click{cursor:pointer}tr.click:hover{background:var(--soft)}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:var(--soft);color:var(--accent);white-space:nowrap}
+.tag.Interested,.tag.Meeting,.tag.Won{background:#dcfce7;color:#166534}
+.tag.Callback{background:#fef3c7;color:#92400e}
+.tag.Lost,.tag.DNC{background:#fee2e2;color:#991b1b}
+.big{font-size:22px;font-weight:700;margin:0}
+.phone{display:inline-block;font-size:24px;font-weight:700;color:var(--accent);text-decoration:none;margin:8px 0}
+.outcomes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.outcomes button{padding:12px}
+.o-good{border-color:var(--good)!important;color:var(--good)}
+.o-bad{border-color:var(--bad)!important;color:var(--bad)}
+.o-warn{border-color:var(--warn)!important;color:var(--warn)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.log{font-size:13px;border-left:2px solid var(--line);padding-left:10px;margin:6px 0}
+.hide{display:none}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;opacity:0;transition:.2s;pointer-events:none}
+.toast.on{opacity:1}
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);width:min(600px,calc(100% - 32px));padding:20px}
+dialog::backdrop{background:#0006}
+.tablewrap{overflow-x:auto}
+@media (max-width:640px){
+  .grid2{grid-template-columns:1fr}
+  .hide-sm{display:none}
+  header h1{width:100%}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>📞 Cold Call CRM</h1>
+  <nav>
+    <button data-v="call" class="on">Call</button>
+    <button data-v="leads">Leads</button>
+    <button data-v="stats">Stats</button>
+    <button data-v="data">Data</button>
+  </nav>
+</header>
+
+<main>
+  <!-- CALL MODE -->
+  <section id="v-call">
+    <div class="row muted" style="margin-bottom:8px"><span id="qinfo"></span></div>
+    <div id="callEmpty" class="card hide">
+      <p class="big">Queue is empty 🎉</p>
+      <p class="muted">Import leads in the <b>Data</b> tab, or add one in <b>Leads</b>.</p>
+    </div>
+    <div id="callCard" class="card hide">
+      <div class="row"><p class="big" id="cName"></p><span class="tag" id="cStatus"></span></div>
+      <div class="muted" id="cAddr"></div>
+      <a class="phone" id="cPhone"></a>
+      <div class="muted" id="cMeta"></div>
+
+      <div class="grid2">
+        <div><label>Decision maker</label><input id="cDm" placeholder="Name"></div>
+        <div><label>Role</label><input id="cRole" placeholder="Owner, GM…"></div>
+        <div><label>Email</label><input id="cEmail" placeholder="Only if they give it"></div>
+        <div><label>Follow-up date</label><input id="cFu" type="date"></div>
+      </div>
+      <label>Call notes</label>
+      <textarea id="cNote" placeholder="What happened?"></textarea>
+
+      <label>Outcome — logs the call & moves to next</label>
+      <div class="outcomes" id="outcomes"></div>
+      <div class="row" style="margin-top:12px">
+        <button class="b" id="skip">Skip →</button>
+      </div>
+      <div id="cHist" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+  <!-- LEADS -->
+  <section id="v-leads" class="hide">
+    <div class="card row">
+      <input id="q" placeholder="Search name, phone, city…" style="flex:2;min-width:180px">
+      <select id="fStatus" style="flex:1;min-width:130px"></select>
+      <button class="b p" id="addLead">+ Add lead</button>
+    </div>
+    <div class="card tablewrap">
+      <table>
+        <thead><tr><th>Business</th><th>Phone</th><th class="hide-sm">City</th><th>Status</th><th class="hide-sm">Calls</th><th class="hide-sm">Follow-up</th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <p class="muted" id="count"></p>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section id="v-stats" class="hide">
+    <h3>Today</h3><div class="stats" id="sToday"></div>
+    <h3>All time</h3><div class="stats" id="sAll"></div>
+    <h3>Pipeline</h3><div class="stats" id="sPipe"></div>
+  </section>
+
+  <!-- DATA -->
+  <section id="v-data" class="hide">
+    <div class="card">
+      <h3 style="margin-top:0">Import leads (CSV)</h3>
+      <p class="muted">Works with <code>scrape_leads.py</code> output and most CSVs with name + phone columns. Duplicates (same phone) are skipped.</p>
+      <input type="file" id="csvFile" accept=".csv,text/csv">
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Export</h3>
+      <div class="row">
+        <button class="b" id="expCsv">Leads → CSV</button>
+        <button class="b" id="expJson">Full backup → JSON</button>
+      </div>
+      <h3>Restore backup</h3>
+      <input type="file" id="jsonFile" accept=".json">
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Danger zone</h3>
+      <button class="b o-bad" id="wipe">Delete all data</button>
+      <p class="muted">Data is saved in this browser only. Export a backup regularly.</p>
+    </div>
+  </section>
+</main>
+
+<dialog id="dlg">
+  <form method="dialog" id="dlgForm">
+    <h3 style="margin-top:0" id="dlgTitle">Lead</h3>
+    <div class="grid2">
+      <div><label>Business name *</label><input name="name" required></div>
+      <div><label>Phone *</label><input name="phone" required></div>
+      <div><label>Decision maker</label><input name="dm"></div>
+      <div><label>Role</label><input name="role"></div>
+      <div><label>Email</label><input name="email"></div>
+      <div><label>Status</label><select name="status"></select></div>
+      <div><label>City</label><input name="city"></div>
+      <div><label>State</label><input name="state"></div>
+      <div><label>Follow-up</label><input name="followup" type="date"></div>
+      <div><label>Address</label><input name="address"></div>
+    </div>
+    <label>Notes</label><textarea name="notes"></textarea>
+    <div id="dlgHist"></div>
+    <div class="row" style="margin-top:16px;justify-content:flex-end">
+      <button class="b o-bad" value="delete" id="dlgDel">Delete</button>
+      <button class="b" value="cancel" formnovalidate>Cancel</button>
+      <button class="b p" value="save">Save</button>
+    </div>
+  </form>
+</dialog>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY = 'coldcall-crm-v1';
+const STATUSES = ['New','Attempting','Callback','Interested','Meeting','Won','Lost','DNC'];
+const CLOSED = ['Meeting','Won','Lost','DNC'];
+const OUTCOMES = [
+  {k:'No answer',     s:'Attempting', c:''},
+  {k:'Voicemail',     s:'Attempting', c:''},
+  {k:'Gatekeeper',    s:'Attempting', c:'o-warn'},
+  {k:'Call back',     s:'Callback',   c:'o-warn', fu:2},
+  {k:'Interested',    s:'Interested', c:'o-good', fu:3},
+  {k:'Meeting booked',s:'Meeting',    c:'o-good', connect:true},
+  {k:'Not interested',s:'Lost',       c:'o-bad',  connect:true},
+  {k:'Wrong number',  s:'Lost',       c:'o-bad'},
+  {k:'Do not call',   s:'DNC',        c:'o-bad'},
+];
+const CONNECTS = ['Gatekeeper','Call back','Interested','Meeting booked','Not interested','Do not call'];
+
+let db = {leads:[]};
+try { const raw = localStorage.getItem(KEY); if (raw) db = JSON.parse(raw); } catch(e){}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch(e){ toast('Could not save — export a backup!'); } };
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ymd = d => d.toLocaleDateString('en-CA');
+const today = () => ymd(new Date());
+const addDays = n => { const d = new Date(); d.setDate(d.getDate()+n); return ymd(d); };
+const digits = p => String(p||'').replace(/\D/g,'');
+const uid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('on'),2000); }
+
+/* ---------- Views ---------- */
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => show(b.dataset.v));
+function show(v){
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.v===v));
+  ['call','leads','stats','data'].forEach(x => $('#v-'+x).classList.toggle('hide', x!==v));
+  ({call:renderCall, leads:renderLeads, stats:renderStats, data:()=>{}})[v]();
+}
+
+/* ---------- Call queue ---------- */
+function queue(){
+  const t = today();
+  return db.leads.filter(l => !CLOSED.includes(l.status)).sort((a,b) => {
+    const rank = l => l.followup ? 0 : l.status==='New' ? 1 : 2;
+    return rank(a)-rank(b) || (a.calls?.length||0)-(b.calls?.length||0) || (a.lastCall||'').localeCompare(b.lastCall||'');
+  }).filter(l => !l.followup || l.followup <= t);
+}
+let current = null, skipped = new Set();
+function renderCall(){
+  const q = queue().filter(l => !skipped.has(l.id));
+  if (!q.length && skipped.size) { skipped.clear(); return renderCall(); }
+  const due = queue().filter(l => l.followup && l.followup <= today()).length;
+  $('#qinfo').textContent = `${q.length} in queue · ${due} follow-ups due · ${callsOn(today()).length} calls today`;
+  current = q[0];
+  $('#callEmpty').classList.toggle('hide', !!current);
+  $('#callCard').classList.toggle('hide', !current);
+  if (!current) return;
+  const l = current;
+  $('#cName').textContent = l.name;
+  $('#cStatus').textContent = l.status; $('#cStatus').className = 'tag '+l.status;
+  $('#cAddr').textContent = [l.address || [l.city,l.state].filter(Boolean).join(', ')].join('');
+  $('#cPhone').textContent = l.phone; $('#cPhone').href = 'tel:'+digits(l.phone);
+  $('#cMeta').innerHTML = [l.rating && `⭐ ${esc(l.rating)} (${esc(l.reviews||0)})`, l.mapsUrl && `<a href="${esc(l.mapsUrl)}" target="_blank" rel="noopener">Maps</a>`, l.followup && `Follow-up: ${esc(l.followup)}`].filter(Boolean).join(' · ');
+  $('#cDm').value = l.dm||''; $('#cRole').value = l.role||''; $('#cEmail').value = l.email||'';
+  $('#cFu').value = ''; $('#cNote').value = '';
+  $('#cHist').innerHTML = history(l);
+}
+function history(l){
+  const parts = [];
+  if (l.notes) parts.push(`<div class="log"><b>Notes:</b> ${esc(l.notes)}</div>`);
+  (l.calls||[]).slice().reverse().forEach(c => parts.push(`<div class="log"><b>${esc(c.outcome)}</b> <span class="muted">${new Date(c.at).toLocaleString()}</span>${c.note?'<br>'+esc(c.note):''}</div>`));
+  return parts.length ? '<label>History</label>'+parts.join('') : '';
+}
+$('#outcomes').innerHTML = OUTCOMES.map((o,i) => `<button class="b ${o.c}" data-i="${i}">${o.k}</button>`).join('');
+$('#outcomes').onclick = e => {
+  const i = e.target.dataset.i; if (i==null || !current) return;
+  const o = OUTCOMES[i], l = current;
+  l.dm = $('#cDm').value.trim(); l.role = $('#cRole').value.trim(); l.email = $('#cEmail').value.trim();
+  const note = $('#cNote').value.trim();
+  l.calls = l.calls||[]; l.calls.push({at:new Date().toISOString(), outcome:o.k, note});
+  l.lastCall = new Date().toISOString();
+  l.status = o.s;
+  l.followup = $('#cFu').value || (o.fu ? addDays(o.fu) : (o.s==='Attempting' ? addDays(1) : ''));
+  if (CLOSED.includes(l.status)) l.followup = $('#cFu').value || '';
+  save(); toast(`Logged: ${o.k}`); renderCall();
+};
+$('#skip').onclick = () => { if (current) skipped.add(current.id); renderCall(); };
+
+/* ---------- Leads table ---------- */
+$('#fStatus').innerHTML = '<option value="">All statuses</option><option value="_due">Follow-up due</option>' + STATUSES.map(s=>`<option>${s}</option>`).join('');
+$('#q').oninput = renderLeads; $('#fStatus').onchange = renderLeads;
+function renderLeads(){
+  const q = $('#q').value.toLowerCase(), f = $('#fStatus').value, t = today();
+  const rows = db.leads.filter(l => {
+    if (f==='_due' ? !(l.followup && l.followup<=t && !CLOSED.includes(l.status)) : (f && l.status!==f)) return false;
+    return !q || [l.name,l.phone,l.city,l.state,l.dm,l.email].join(' ').toLowerCase().includes(q) || digits(l.phone).includes(digits(q)||'@');
+  });
+  $('#tbody').innerHTML = rows.slice(0,500).map(l => `<tr class="click" data-id="${l.id}">
+    <td><b>${esc(l.name)}</b>${l.dm?`<br><span class="muted">${esc(l.dm)}</span>`:''}</td>
+    <td><a href="tel:${digits(l.phone)}" onclick="event.stopPropagation()">${esc(l.phone)}</a></td>
+    <td class="hide-sm">${esc([l.city,l.state].filter(Boolean).join(', '))}</td>
+    <td><span class="tag ${l.status}">${l.status}</span></td>
+    <td class="hide-sm">${(l.calls||[]).length}</td>
+    <td class="hide-sm">${esc(l.followup||'')}</td></tr>`).join('');
+  $('#count').textContent = `${rows.length} of ${db.leads.length} leads` + (rows.length>500?' (showing first 500)':'');
+}
+$('#tbody').onclick = e => { const tr = e.target.closest('tr'); if (tr) openLead(db.leads.find(l=>l.id===tr.dataset.id)); };
+$('#addLead').onclick = () => openLead(null);
+
+const F = $('#dlgForm');
+F.status.innerHTML = STATUSES.map(s=>`<option>${s}</option>`).join('');
+let editing = null;
+function openLead(l){
+  editing = l;
+  $('#dlgTitle').textContent = l ? 'Edit lead' : 'New lead';
+  $('#dlgDel').classList.toggle('hide', !l);
+  ['name','phone','dm','role','email','status','city','state','followup','address','notes'].forEach(k => F[k].value = l ? (l[k]||'') : (k==='status'?'New':''));
+  $('#dlgHist').innerHTML = l ? history({...l, notes:''}) : '';
+  $('#dlg').showModal();
+}
+$('#dlg').addEventListener('close', () => {
+  const v = $('#dlg').returnValue;
+  if (v==='delete' && editing && confirm(`Delete ${editing.name}?`)) { db.leads = db.leads.filter(l=>l!==editing); save(); toast('Deleted'); }
+  if (v==='save') {
+    const data = {}; ['name','phone','dm','role','email','status','city','state','followup','address','notes'].forEach(k => data[k] = F[k].value.trim());
+    if (editing) Object.assign(editing, data); else db.leads.push({id:uid(), calls:[], created:new Date().toISOString(), ...data});
+    save(); toast('Saved');
+  }
+  renderLeads();
+});
+
+/* ---------- Stats ---------- */
+function callsOn(day){ return db.leads.flatMap(l => (l.calls||[]).filter(c => !day || ymd(new Date(c.at))===day)); }
+function statBlock(calls){
+  const n = calls.length, conn = calls.filter(c=>CONNECTS.includes(c.outcome)).length, mtg = calls.filter(c=>c.outcome==='Meeting booked').length;
+  const pct = (a,b) => b ? Math.round(a/b*100)+'%' : '—';
+  return [['Dials',n],['Connects',conn],['Connect rate',pct(conn,n)],['Meetings',mtg],['Meeting rate',pct(mtg,conn)]]
+    .map(([k,v])=>`<div class="stat"><b>${v}</b><span>${k}</span></div>`).join('');
+}
+function renderStats(){
+  $('#sToday').innerHTML = statBlock(callsOn(today()));
+  $('#sAll').innerHTML = statBlock(callsOn());
+  $('#sPipe').innerHTML = STATUSES.map(s=>`<div class="stat"><b>${db.leads.filter(l=>l.status===s).length}</b><span>${s}</span></div>`).join('');
+}
+
+/* ---------- CSV ---------- */
+function parseCSV(text){
+  const rows=[]; let row=[], f='', q=false;
+  for (let i=0;i<text.length;i++){
+    const c=text[i];
+    if (q){ if(c==='"'){ if(text[i+1]==='"'){f+='"';i++;} else q=false; } else f+=c; }
+    else if (c==='"') q=true;
+    else if (c===','){ row.push(f); f=''; }
+    else if (c==='\n'||c==='\r'){ if(c==='\r'&&text[i+1]==='\n')i++; row.push(f); rows.push(row); row=[]; f=''; }
+    else f+=c;
+  }
+  if (f||row.length){ row.push(f); rows.push(row); }
+  return rows.filter(r => r.some(x=>x.trim()));
+}
+const MAP = {
+  name:['business_name','name','company','business'], phone:['formatted_phone','phone','phone_number','international_phone'],
+  address:['address','formatted_address'], city:['city'], state:['state'], mapsUrl:['google_maps_url','maps_url','url'],
+  rating:['rating'], reviews:['review_count','reviews'], dm:['decision_maker_name','contact','contact_name'],
+  role:['decision_maker_role','role','title'], email:['email'], notes:['notes'], placeId:['place_id']
+};
+$('#csvFile').onchange = async e => {
+  const file = e.target.files[0]; if (!file) return;
+  const rows = parseCSV(await file.text()); e.target.value='';
+  if (rows.length<2) return toast('No rows found');
+  const head = rows[0].map(h=>h.trim().toLowerCase());
+  const idx = {}; for (const [k,alts] of Object.entries(MAP)) idx[k] = alts.map(a=>head.indexOf(a)).find(i=>i>=0);
+  if (idx.name==null || idx.phone==null) return toast('Need a name and phone column');
+  const seen = new Set(db.leads.map(l=>digits(l.phone)));
+  let added=0, dup=0;
+  for (const r of rows.slice(1)){
+    const l = {id:uid(), status:'New', calls:[], created:new Date().toISOString()};
+    for (const k in idx) if (idx[k]!=null) l[k] = (r[idx[k]]||'').trim();
+    if (!l.name || !digits(l.phone)) continue;
+    if (seen.has(digits(l.phone))) { dup++; continue; }
+    seen.add(digits(l.phone)); db.leads.push(l); added++;
+  }
+  save(); toast(`Imported ${added} · skipped ${dup} duplicates`);
+};
+function download(name, text, type){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; a.click(); }
+const csvCell = v => /[",\n]/.test(v=String(v??'')) ? '"'+v.replace(/"/g,'""')+'"' : v;
+$('#expCsv').onclick = () => {
+  const cols = ['name','phone','dm','role','email','status','followup','city','state','address','rating','reviews','mapsUrl','notes'];
+  const lines = [[...cols,'calls','last_outcome','last_call'].join(',')];
+  db.leads.forEach(l => { const last=(l.calls||[]).slice(-1)[0]; lines.push([...cols.map(c=>l[c]),(l.calls||[]).length,last?.outcome,last?.at].map(csvCell).join(',')); });
+  download(`crm-leads-${today()}.csv`, lines.join('\n'), 'text/csv');
+};
+$('#expJson').onclick = () => download(`crm-backup-${today()}.json`, JSON.stringify(db,null,1), 'application/json');
+$('#jsonFile').onchange = async e => {
+  const f = e.target.files[0]; if (!f) return; e.target.value='';
+  try { const d = JSON.parse(await f.text()); if (!Array.isArray(d.leads)) throw 0;
+    if (confirm(`Replace current data with ${d.leads.length} leads from backup?`)) { db=d; save(); toast('Restored'); } }
+  catch { toast('Not a valid backup file'); }
+};
+$('#wipe').onclick = () => { if (confirm('Delete ALL leads and call history? This cannot be undone.')) { db={leads:[]}; save(); toast('All data deleted'); } };
+
+renderCall();
+</script>
+</body>
+</html>
