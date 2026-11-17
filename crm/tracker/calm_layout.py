@@ -110,6 +110,39 @@ select.segsel{background:var(--panel)}
 .ins + .ins{margin-top:12px}
 @media (max-width:860px){.desk{grid-template-columns:minmax(0,1fr)}.alist{position:static;max-height:300px;border-right:0;border-bottom:1px solid var(--line)}.flow{padding:16px}}
 @media (max-width:900px){.top{height:auto}}
+
+/* three columns: accounts | call | company info + follow-up */
+.desk{grid-template-columns:280px minmax(0,1fr) 340px}
+.flow{max-width:none;margin:0;padding:20px 24px 60px}
+.side{border-left:1px solid var(--line);padding:20px 18px 40px;display:flex;flex-direction:column;gap:14px;position:sticky;top:60px;max-height:calc(100vh - 60px);overflow-y:auto;background:rgba(255,255,255,.45)}
+.side .box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow)}
+.side .box h4{font-size:13px;font-weight:500;color:var(--muted);margin:0 0 10px}
+.side .fold > summary{padding:13px 18px}
+.side .fold-b.pad{padding:12px 18px}
+.side .ins{padding:16px 18px}
+.side .fu-row input{min-width:0;flex:1 1 120px}
+.side .fu-sum{font-size:12px;color:var(--muted);margin:8px 0 0}
+@media (max-width:1200px){.desk{grid-template-columns:260px minmax(0,1fr)}.side{grid-column:1/-1;position:static;max-height:none;border-left:0;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));align-items:start}}
+@media (max-width:860px){.desk{grid-template-columns:minmax(0,1fr)}.side{display:flex}}
+
+/* quieter text: bold only for names and numbers */
+.tabs button,.tabs button[aria-selected="true"]{font-weight:500}
+.alist .lh{font-weight:600}
+.acc b{font-weight:500}
+.hero .cn{font-size:22px}
+.who .nm{font-size:19px;font-weight:600}
+.link,.btn,.st,.fold > summary,.obj summary{font-weight:500}
+.o{font-weight:400}
+.numbox b{font-weight:500}
+.numbox.main b{font-weight:600}
+.step-h{text-transform:none;letter-spacing:0;font-size:13px;font-weight:500;margin-bottom:10px}
+.step-h b{display:none}
+.ins .ih b{letter-spacing:0;font-weight:600;font-size:14.5px;color:var(--ink)}
+.ins h4{font-size:12px;font-weight:500;margin:12px 0 2px}
+.ins p{color:var(--ink)}
+.ins .src{font-size:11.5px;color:var(--muted);margin-top:10px}
+.opener{margin-top:14px;padding:11px 14px;border-radius:12px;background:var(--soft);border:1px solid var(--line-2);font-size:13.5px;line-height:1.5}
+.opener small{display:block;color:var(--muted);font-size:11.5px;margin-bottom:2px}
 </style>""")
 
 # ---------- one-column accounts view ----------
@@ -158,31 +191,41 @@ function rAccounts(){
         <span class="muted" style="font-size:12.5px">${last.lastOutcome ? 'Last: ' + esc(OMAP[last.lastOutcome]?.t || last.lastOutcome) + ', ' + fmtTs(last.lastTs) : 'Not called yet'}</span></div>
       <div class="nums">${ph.map(([k,v], i) => `<div class="numbox${i === 0 ? ' main' : ''}"><small>${esc(k)}</small><b>${esc(v)}</b></div>`).join('') || '<div class="numbox"><small>No numbers yet</small><b class="em">Use Edit contact to add one</b></div>'}</div>
       ${pr.e ? `<div class="small-line">${esc(pr.e)}</div>` : ''}
+      ${BR(co.key) ? `<div class="opener"><small>Opening line</small>"Hi ${esc(pr.f)}, it's Arsida. I look after urgent same-day deliveries for firms like ${esc(casual(co))}. When a part or kit has to be somewhere today, who sorts that out for you?"</div>` : ''}
       <div class="plinks">${pr.li ? `<a class="link" href="${esc(pr.li)}" target="_blank" rel="noopener">${ic('li')}LinkedIn</a>` : ''}<button class="link" data-edit-person="${pr.id}">${ic('edit')}Edit contact</button><button class="link" data-dm="${pr.id}">${ic('star')}${a.dm === pr.id ? 'Remove decision maker' : 'Mark as decision maker'}</button></div>
     </section>
-
-    ${insightHTML(co)}
 
     <section class="card step"><div class="step-h"><b>2</b>What happened?</div>
       <div class="og"><small>Didn't get through</small><div class="outs">${OUTCOMES.filter(o => !o.connect).map(chip).join('')}</div></div>
       <div class="og"><small>Spoke to someone</small><div class="outs">${OUTCOMES.filter(o => o.connect).map(chip).join('')}</div></div>
       <textarea id="note" rows="3" spellcheck="true" lang="en-GB" placeholder="Notes: who you spoke to, what they said">${esc(form.note)}</textarea>
-      <div class="fu"><small>Follow-up (optional)</small>
-        <div class="fu-row"><input type="date" id="fuD" value="${esc(form.fuDate)}" min="${today()}" aria-label="Follow-up date"><input type="time" id="fuT" value="${esc(form.fuTime)}" aria-label="Follow-up time"></div>
-        <textarea id="fuN" rows="2" spellcheck="true" lang="en-GB" placeholder="What to say or send next time">${esc(form.fuNote)}</textarea>
-        ${fuSum ? `<p class="fu-sum">${fuSum}</p>` : ''}</div>
       <div class="flags">Couldn't call?${Object.entries(FLAGS).map(([k,t]) => `<button class="o flag" data-flag="${k}" aria-pressed="${form.flag === k}"><i></i>${t}</button>`).join('')}</div>
       <div class="savebar"><button class="btn p" id="saveBtn">Save and next account</button><button class="btn" id="saveStay">Save and stay</button><button class="btn ghost" id="skipBtn">Skip</button></div>
     </section>
 
     ${others.length ? fold('people', 'Other people here', others.length, peopleRows) : ''}
+  </main>
+  <aside class="side">
+    ${insightHTML(co)}
+    <div class="box"><h4>Follow-up</h4>
+      <div class="fu-row"><input type="date" id="fuD" value="${esc(form.fuDate)}" min="${today()}" aria-label="Follow-up date"><input type="time" id="fuT" value="${esc(form.fuTime)}" aria-label="Follow-up time"></div>
+      <textarea id="fuN" rows="3" spellcheck="true" lang="en-GB" placeholder="What to say or send next time">${esc(form.fuNote)}</textarea>
+      <p class="fu-sum">${fuSum || 'Pick a date and it saves with the call.'}</p></div>
     ${fold('obj', 'If they say…', null, OBJ_HTML, true)}
     ${fold('hist', 'History', log.length, timeline, true)}
-  </main></div>`;
+  </aside></div>`;
   bindAccounts(co, pr);
 }
 '''
 s = s[:start] + NEW_RACC + s[end:]
 s = s.replace('const BRIEFS = ', 'const OBJ_HTML = ' + __import__('json').dumps('<div class="obj">' + obj_html + '</div>') + ';\nconst BRIEFS = ', 1)
+a = s.index('function briefHTML(co){'); b = s.index('function insightHTML(co){')
+s = s[:a] + r'''function briefHTML(co){
+  const b = BR(co.key); if(!b) return '';
+  return `<div class="ins"><div class="ih"><b>About ${esc(b[0])}</b><button data-insight>More research</button></div>
+    <p>${esc(b[2])}</p><h4>Why urgent delivery matters</h4><p>${esc(b[3])}</p>
+    <p class="src">From general knowledge. Check before quoting.</p></div>`;
+}
+''' + s[b:]
 # brief: calmer wording + no API panel unless asked
 s = s.replace('<div class="ih"><b>CALL BRIEF · ${esc(b[0].toUpperCase())}</b><button data-insight>Deeper AI research</button></div>', '<div class="ih"><b>CALL BRIEF</b><button data-insight>Deeper AI research</button></div>')
