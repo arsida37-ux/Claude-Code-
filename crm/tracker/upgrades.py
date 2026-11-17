@@ -236,3 +236,39 @@ rep(".ledit{display:flex;", """.dmstar{color:#F5B301;font-size:1.05em;margin-lef
 rep(".qt{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}", ".qt{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-bottom:10px}\n.side > *{flex-shrink:0}")
 rep(".qc.t{padding:5px 8px;font-size:12.5px;flex:1 1 auto}", ".qc.t{padding:6px 2px;font-size:12.5px}")
 rep("""data-fut="${t}">${t || 'Any time'}</button>""", """data-fut="${t}">${t || 'Any'}</button>""")
+
+# ---------- compact follow-up: Day · Month · Time + note ----------
+fa = s.index('    <div class="box fubox"><div class="eb">Follow-up</div>')
+end_m = "'Tap a day. Call back and Interested get the next working day if you leave it.'}</p></div>"
+fb = s.index(end_m, fa) + len(end_m)
+s = s[:fa] + r'''    <div class="box fubox"><div class="eb">Follow-up</div>
+      <div class="fpick">
+        <select id="fDay" aria-label="Day" class="${fuParts().day ? 'set' : ''}"><option value="">Day</option>${Array.from({length:31}, (_, i) => `<option value="${i+1}"${fuParts().day === i+1 ? ' selected' : ''}>${i+1}</option>`).join('')}</select>
+        <select id="fMon" aria-label="Month" class="${fuParts().mon !== '' ? 'set' : ''}"><option value="">Month</option>${MON.map((m, i) => `<option value="${i}"${fuParts().mon === i ? ' selected' : ''}>${m}</option>`).join('')}</select>
+        <select id="fTime" aria-label="Time" class="${form.fuTime ? 'set' : ''}"><option value="">Time</option>${fuTimes().map(t => `<option${t === form.fuTime ? ' selected' : ''}>${t}</option>`).join('')}</select>
+      </div>
+      <textarea id="fuN" rows="2" spellcheck="true" lang="en-GB" placeholder="Add note">${esc(form.fuNote)}</textarea>
+      <p class="fu-sum">${form.fuDate ? `<b>${esc(fmtFu(form.fuDate + (form.fuTime ? 'T' + form.fuTime : '')))}</b> · saves with the call <button class="link" id="fuClear" style="font-size:12px">Clear</button>` : fuSum || 'Call back and Interested get the next working day if you leave it.'}</p></div>''' + s[fb:]
+rep("$('#fuD').onchange", "if($('#fuD')) $('#fuD').onchange")
+rep("$('#fuT').onchange", "if($('#fuT')) $('#fuT').onchange")
+rep("const shortDay = k =>", r"""function fuParts(){ if(!form.fuDate) return {day:'', mon:''}; const d = new Date(form.fuDate + 'T00:00'); return {day:d.getDate(), mon:d.getMonth()}; }
+function fuTimes(){ const out = []; for(let h = 8; h <= 18; h++) for(const m of ['00','30']) if(!(h === 18 && m === '30')) out.push(pad(h) + ':' + m); if(form.fuTime && !out.includes(form.fuTime)) out.push(form.fuTime); return out; }
+function setFu(day, mon){ const now = new Date(); now.setHours(0,0,0,0); let y = now.getFullYear();
+  if(mon === null) mon = day && day < now.getDate() ? now.getMonth() + 1 : now.getMonth();
+  if(mon > 11){ mon = 0; y++; }
+  if(!day) day = (mon === now.getMonth() && y === now.getFullYear()) ? now.getDate() : 1;
+  const fit = (yy, mm, dd) => new Date(yy, mm, Math.min(dd, new Date(yy, mm + 1, 0).getDate()));
+  let dt = fit(y, mon, day); if(dt < now) dt = fit(y + 1, mon, day);
+  form.fuDate = dayKey(dt); form.touched = true; }
+const shortDay = k =>""")
+rep("""  const fx = $('#fuClear'); if(fx) fx.onclick = () => { form.fuDate = ''; form.fuTime = ''; render(true); };""",
+    """  const fx = $('#fuClear'); if(fx) fx.onclick = () => { form.fuDate = ''; form.fuTime = ''; render(true); };
+  const fdy = $('#fDay'), fmo = $('#fMon'), ftm = $('#fTime');
+  if(fdy) fdy.onchange = e => { const v = +e.target.value; if(!v){ form.fuDate = ''; form.fuTime = ''; } else setFu(v, fuParts().mon === '' ? null : fuParts().mon); render(true); };
+  if(fmo) fmo.onchange = e => { if(e.target.value === ''){ form.fuDate = ''; form.fuTime = ''; } else setFu(fuParts().day || 0, +e.target.value); render(true); };
+  if(ftm) ftm.onchange = e => { form.fuTime = e.target.value; if(form.fuTime && !form.fuDate){ form.fuDate = workdaysAhead(1); form.touched = true; } render(true); };""")
+rep(".side > *{flex-shrink:0}", """.side > *{flex-shrink:0}
+.fpick{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr) minmax(0,1fr);gap:6px;margin-bottom:8px}
+.fpick select{width:100%;min-width:0;padding:8px 8px;font-size:13.5px;border-radius:10px;background:#fff;border-color:#F0E1C0;cursor:pointer}
+.fpick select.set{border-color:#F59E0B;background:#FFF5E4;color:#92400E;font-weight:500}
+.fubox textarea{min-height:0}""")
