@@ -15,7 +15,7 @@ nav = '<nav class="tabs" id="tabs" role="tablist">\n'
 for k, t in LABELS:
     c, p = ICONS[k]
     extra = ' <span class="dot-n" id="dueN" hidden></span>' if k == 'followups' else ''
-    nav += f'    <button data-tab="{k}"><i class="ti" style="--tc:{c}"><svg viewBox="0 0 24 24">{p}</svg></i>{t}{extra}</button>\n'
+    nav += f'    <button data-tab="{k}"><i class="tabi" style="--tc:{c}"><svg viewBox="0 0 24 24">{p}</svg></i>{t}{extra}</button>\n'
 nav += '  </nav>\n  <button class="qs" id="qsBtn" type="button" aria-label="Search companies and people"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search</span><kbd>Ctrl K</kbd></button>'
 s = s[:na] + nav + s[nb:]
 
@@ -106,8 +106,8 @@ rep(".bigcal .day.td .dn span{background:#0A0A0C}", r""".bigcal .day.td .dn span
 .tabs button,.tabs button:hover,.tabs button[aria-selected="true"]{border-radius:0;background:none;padding:0 10px;border-bottom:2px solid transparent;border-top:2px solid transparent;gap:8px;font-weight:500}
 .tabs button:hover{color:var(--ink)}
 .tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:#0A0A0C}
-.ti{width:20px;height:20px;border-radius:6px;background:var(--tc);display:grid;place-items:center;flex:none}
-.ti svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.tabi{width:20px;height:20px;border-radius:6px;background:var(--tc);display:grid;place-items:center;flex:none}
+.tabi svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
 .qs{margin-left:auto;display:flex;align-items:center;gap:8px;border:1px solid rgba(0,0,0,.1);background:#fff;border-radius:2em;padding:7px 10px 7px 12px;color:var(--muted);font:inherit;font-size:13.5px;cursor:pointer;min-width:0;width:220px;flex-shrink:1}
 .qs:hover{border-color:rgba(0,0,0,.25)}
 .qs svg,.pin svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;flex:none}

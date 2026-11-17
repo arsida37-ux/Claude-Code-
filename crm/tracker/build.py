@@ -135,5 +135,6 @@ rep("""rows.push([co.name, co.g, SLABEL[a.stage],""", """rows.push([co.name, co.
 exec(open(__file__.rsplit('/',1)[0] + '/calm_layout.py', encoding='utf-8').read())
 exec(open(__file__.rsplit('/',1)[0] + '/upgrades.py', encoding='utf-8').read())
 exec(open(__file__.rsplit('/',1)[0] + '/clickup_ideas.py', encoding='utf-8').read())
+exec(open(__file__.rsplit('/',1)[0] + '/redo_dials.py', encoding='utf-8').read())
 open(OUT, 'w', encoding='utf-8').write(s)
 print('wrote', OUT, len(s), 'bytes')
