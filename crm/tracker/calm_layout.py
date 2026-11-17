@@ -112,7 +112,7 @@ select.segsel{background:var(--panel)}
 @media (max-width:900px){.top{height:auto}}
 
 /* three columns: accounts | call | company info + follow-up */
-.desk{grid-template-columns:280px minmax(0,1fr) 340px}
+.desk{grid-template-columns:270px minmax(0,1fr) 360px}
 .flow{max-width:none;margin:0;padding:20px 24px 60px}
 .side{border-left:1px solid var(--line);padding:20px 18px 40px;display:flex;flex-direction:column;gap:14px;position:sticky;top:60px;max-height:calc(100vh - 60px);overflow-y:auto;background:rgba(255,255,255,.45)}
 .side .box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow)}
@@ -169,6 +169,15 @@ rep('.opener small{display:block;color:var(--muted);font-size:11.5px;margin-bott
 .outc .step-h{font-size:15px;color:var(--ink);font-weight:600}
 .outc .o{padding:9px 15px;font-size:13.5px}
 @media (max-width:600px){.office{text-align:left}}
+/* fixes: selected outcome keeps its colour on hover; long names wrap instead of being cut off */
+.o[aria-pressed="true"],.o[aria-pressed="true"]:hover{background:var(--c);border-color:var(--c);color:#fff}
+.o[aria-pressed="true"] i{background:#fff}
+.acc b,.acc small,.pc b,.pc small,.rowi b,.rowi small,.pp b,.pp small,.pp .ph{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
+.acc b,.pc b,.rowi b{line-height:1.3}
+.acc{align-items:flex-start}.acc .sdot{margin-top:6px}
+.side .fu-row{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:8px}
+.side .fu-row input{width:100%;min-width:0;padding:9px 8px}
+.who-id .ti,.hero .cn,.chip{overflow-wrap:anywhere}
 ''')
 
 # ---------- one-column accounts view ----------
