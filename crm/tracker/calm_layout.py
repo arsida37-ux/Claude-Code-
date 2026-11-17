@@ -169,6 +169,18 @@ rep('.opener small{display:block;color:var(--muted);font-size:11.5px;margin-bott
 .outc .step-h{font-size:15px;color:var(--ink);font-weight:600}
 .outc .o{padding:9px 15px;font-size:13.5px}
 @media (max-width:600px){.office{text-align:left}}
+.filt{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px;margin-bottom:10px}
+.filt select{width:100%;min-width:0;padding:6px 8px;font-size:12.5px;background:var(--panel)}
+.filt .full{grid-column:1/-1}
+.filt .link{font-size:12.5px;justify-self:start;margin:2px 2px 0}
+.tstack{display:flex;flex-direction:column;gap:16px}
+.goal{padding:16px 20px}
+.goal-h{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:9px}
+.goal-h b{color:var(--ink);font-weight:600}
+.bar{height:8px;background:var(--line-2);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--glow),var(--accent));border-radius:99px;transition:width .4s}
+.calm-note{margin:4px 2px;color:var(--muted)}
+.hb b{font-weight:500}
 /* fixes: selected outcome keeps its colour on hover; long names wrap instead of being cut off */
 .o[aria-pressed="true"],.o[aria-pressed="true"]:hover{background:var(--c);border-color:var(--c);color:#fff}
 .o[aria-pressed="true"] i{background:#fff}
@@ -183,16 +195,32 @@ rep('.opener small{display:block;color:var(--muted);font-size:11.5px;margin-bott
 # ---------- one-column accounts view ----------
 start = s.index('function rAccounts(){'); end = s.index('function bindAccounts(co, pr){')
 NEW_RACC = r'''const openSec = new Set();
+let stF = '', sortBy = '', nextFrom = null, prevList = [];
+function accountList(q, all, s){
+  const inScope = c => (ag === 'all' || c.g === ag) && (!sg || segOf(c) === sg);
+  let L;
+  if(s) L = all.filter(c => (c.name + ' ' + c.ppl.map(p => p.f + ' ' + (p.l||'')).join(' ')).toLowerCase().includes(s));
+  else if(stF || sortBy) L = all.filter(inScope);
+  else return q.map(x => x.co);
+  if(stF) L = L.filter(c => { const a = A(c.key); return stF === 'due' ? ['overdue','today'].includes(fuState(a)) : stF === 'parked' ? flagged(a) : a.stage === stF; });
+  const ts = c => A(c.key).followUp ? fuTs(A(c.key).followUp) : Infinity;
+  const by = {az:(x,y) => x.name.localeCompare(y.name), ppl:(x,y) => y.ppl.length - x.ppl.length, last:(x,y) => (A(y.key).lastCalled||0) - (A(x.key).lastCalled||0), fu:(x,y) => ts(x) - ts(y)}[sortBy];
+  return by ? [...L].sort(by) : L;
+}
 function sdot(a){ const f = fuState(a); if(f === 'overdue') return '<i class="sdot" style="--c:var(--red)" title="Overdue"></i>'; if(f === 'today') return '<i class="sdot" style="--c:var(--accent)" title="Follow-up today"></i>';
   if(a.stage === 'New') return ''; return `<i class="sdot" style="--c:var(${SC[a.stage]})" title="${esc(SLABEL[a.stage])}"></i>`; }
 function rAccounts(){
-  const q = queue(), all = companies();
-  if(!curKey || !all.some(c => c.key === curKey)) curKey = q[0]?.co.key || all[0]?.key;
+  const q = queue(), all = companies(), s = aq.toLowerCase();
+  const listed = accountList(q, all, s);
+  if(!curKey || !all.some(c => c.key === curKey)){
+    let pick = null;
+    if(nextFrom){ const i = prevList.indexOf(nextFrom), keys = new Set(listed.map(c => c.key)); pick = prevList.slice(i + 1).find(k => keys.has(k)) || null; }
+    curKey = pick || listed.find(c => c.key !== nextFrom)?.key || q[0]?.co.key || all[0]?.key; nextFrom = null;
+  }
+  prevList = listed.map(c => c.key);
   const co = all.find(c => c.key === curKey), a = A(curKey);
   if(!curPerson || !co.ppl.some(p => p.id === curPerson)) curPerson = bestPerson(co);
   const pr = co.ppl.find(p => p.id === curPerson), ft = fitScore(pr), last = P(pr.id);
-  const s = aq.toLowerCase();
-  const listed = s ? all.filter(c => (c.name + ' ' + c.ppl.map(p => p.f + ' ' + (p.l||'')).join(' ')).toLowerCase().includes(s)) : q.map(x => x.co);
   const called = co.ppl.filter(p => P(p.id).lastOutcome).length;
   const log = (a.log||[]).map((e,i) => ({e,i})).reverse();
   const ph = phones(pr), others = rankPeople(co).filter(p => p.id !== pr.id);
@@ -205,10 +233,15 @@ function rAccounts(){
       return `<div class="e" style="--c:var(${o ? o.c : '--line'})"><div class="m"><b>${e.outcome ? esc(o?.t || e.outcome) : e.tag ? esc(e.tag) : e.kind === 'fu' ? 'Follow-up set' : 'Note'}</b>${who ? '· ' + esc(who.f + ' ' + (who.l||'')) : ''} · ${fmtTs(e.ts)}<button class="x" data-del="${i}">${delArm === i ? 'Delete?' : 'Remove'}</button></div>${e.note ? `<p>${esc(e.note)}</p>` : ''}</div>`; }).join('')}</div>` : '<p class="muted" style="margin:0;font-size:13px">No calls yet.</p>';
   const fuSum = form.fuDate ? `Saved with the call: <b>${esc(fmtFu(form.fuDate + (form.fuTime ? 'T' + form.fuTime : '')))}</b>${form.fuTime ? ', with a pop-up reminder.' : '.'}` : a.followUp && a.stage !== 'Lost' ? `Current: <b>${esc(fmtFu(a.followUp))}</b>. Pick a new date to change it.` : '';
   $('#view').innerHTML = `<div class="desk">
-  <aside class="alist"><div class="lh">${s ? 'Search results' : 'Accounts to call'}<span class="num">${listed.length}</span></div>
+  <aside class="alist"><div class="lh">${s ? 'Search results' : 'Dials'}<span class="num">${listed.length}</span></div>
     <input type="search" id="aq" placeholder="Search company or person" value="${esc(aq)}">
     ${s ? '' : `<div class="seg">${[['all','All'],['Defence','Defence'],['Aerospace','Aerospace']].map(([v,t]) => `<button data-ag="${v}" aria-pressed="${ag === v}">${t}</button>`).join('')}</div>
-    <select class="segsel" id="sgSel" aria-label="Filter by sector"><option value="">All sectors</option>${SEGS().map(x => `<option${x === sg ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select>`}
+    <div class="filt">
+      <select id="sgSel" aria-label="Sector"><option value="">All sectors</option>${SEGS().map(x => `<option${x === sg ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select>
+      <select id="stSel" aria-label="Status"><option value="">Any status</option><option value="due"${stF === 'due' ? ' selected' : ''}>Follow-up due</option>${STAGES.map(x => `<option value="${x}"${x === stF ? ' selected' : ''}>${SLABEL[x]}</option>`).join('')}<option value="parked"${stF === 'parked' ? ' selected' : ''}>Parked</option></select>
+      <select id="soSel" class="full" aria-label="Sort">${[['','Sort: call order'],['az','Sort: A to Z'],['ppl','Sort: most contacts'],['last','Sort: last called'],['fu','Sort: next follow-up']].map(([v,t]) => `<option value="${v}"${v === sortBy ? ' selected' : ''}>${t}</option>`).join('')}</select>
+      ${stF || sortBy || sg ? '<button class="link full" id="clrF">Clear filters</button>' : ''}
+    </div>`}
     ${listed.slice(0, alimit).map(c => `<button class="acc${c.key === curKey ? ' on' : ''}" data-acc="${esc(c.key)}">${lgHTML(c)}<span class="t"><b>${esc(c.name)}</b><small>${esc(segOf(c))}</small></span>${sdot(A(c.key))}</button>`).join('') || '<div class="empty">No matches.</div>'}
     ${listed.length > alimit ? '<button class="btn sm" id="moreA" style="width:100%;justify-content:center">Show more</button>' : ''}
   </aside>
@@ -251,6 +284,9 @@ function rAccounts(){
   </aside></div>`;
   bindAccounts(co, pr);
   document.querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copyText(b.dataset.copy, b));
+  const st = $('#stSel'); if(st) st.onchange = e => { stF = e.target.value; curKey = null; render(true); };
+  const so = $('#soSel'); if(so) so.onchange = e => { sortBy = e.target.value; curKey = null; render(true); };
+  const cf = $('#clrF'); if(cf) cf.onclick = () => { stF = ''; sortBy = ''; sg = ''; curKey = null; render(true); };
 }
 function copyText(t, btn){ const ok = () => { btn.textContent = 'Copied'; setTimeout(() => { btn.textContent = 'Copy'; }, 1500); };
   try{ navigator.clipboard.writeText(t).then(ok, () => fallbackCopy(t) && ok()); }catch(e){ if(fallbackCopy(t)) ok(); } }
@@ -261,6 +297,30 @@ s = s[:start] + NEW_RACC + s[end:]
 s = s.replace('const BRIEFS = ', 'const OBJ_HTML = ' + __import__('json').dumps('<div class="obj">' + obj_html + '</div>') + ';\nconst BRIEFS = ', 1)
 s = s.replace("  if(form.fuDate){ patch.followUp", "  if(!form.fuDate && ['Call Back','Interested'].includes(form.outcome)) form.fuDate = nextWorkday();\n  if(form.fuDate){ patch.followUp", 1)
 assert 'nextWorkday();\n  if(form.fuDate)' in s
+rep("  if(next){ curKey = null; curPerson = null;", "  if(next){ nextFrom = curKey; curKey = null; curPerson = null;")
+rep("$('#skipBtn').onclick = () => { skipped.add(curKey); curKey = null;", "$('#skipBtn').onclick = () => { skipped.add(curKey); nextFrom = curKey; curKey = null;")
+rep('<button data-tab="accounts">Accounts</button>', '<button data-tab="accounts">Dials</button>')
+ta = s.index('function rToday(){'); tb = s.index('/* ---------- accounts cockpit ---------- */')
+s = s[:ta] + r'''function rToday(){
+  const st = dayStats(), g = settings.goal, q = queue(), due = dueAccounts(), t = today();
+  const h = new Date().getHours(), greet = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  const line = st.calls >= g ? 'Goal reached. Brilliant work today.' : st.calls === 0 ? 'Fresh day. The first call sets the tone.' : st.calls < g/2 ? 'Momentum is building. Keep the rhythm.' : 'Past halfway. Finish strong.';
+  const ls = logsAll().filter(e => dayKey(e.ts) === t), pct = Math.min(100, Math.round(st.calls / g * 100)), rate = st.calls ? Math.round(st.connects / st.calls * 100) : 0;
+  const oc = OUTCOMES.map(o => ({o, n:ls.filter(e => e.outcome === o.k).length})).filter(x => x.n), om = Math.max(1, ...oc.map(x => x.n));
+  const over = due.filter(co => fuState(A(co.key)) === 'overdue').length;
+  $('#view').innerHTML = `<div class="page today">
+  <div class="head"><div><h2>${greet}, Arsida</h2><p>${esc(line)}</p></div>${q.length ? `<button class="btn p" data-acc="${esc(q[0].co.key)}">Log call</button>` : ''}</div>
+  <div class="tstack">
+    <section class="card kpis"><div><b class="num">${st.calls}<span style="font-size:15px;color:var(--faint);font-weight:400"> / ${g}</span></b><span>Calls today</span></div>
+      <div><b class="num">${st.connects}</b><span>Conversations</span></div><div><b class="num">${rate}%</b><span>Conversation rate</span></div><div><b class="num">${st.meetings}</b><span>Meetings booked</span></div></section>
+    <section class="card goal"><div class="goal-h"><span>Daily goal</span><b class="num">${st.calls} of ${g}</b></div><div class="bar"><i style="width:${pct}%"></i></div></section>
+    ${due.length ? `<section class="card"><div class="card-h"><h3>Follow-ups due ${over ? '' : 'today'}</h3><span class="muted num">${due.length}${over ? ` · ${over} overdue` : ''}</span></div>
+      <div>${due.map(co => { const f = A(co.key).followUp, when = fuState(A(co.key)) === 'today' ? (f.length > 10 ? f.slice(11,16) : '') : fmtFu(f); return accRow(co, when ? `<span class="muted num" style="font-size:12.5px;white-space:nowrap">${esc(when)}</span>` : ''); }).join('')}</div></section>`
+      : '<p class="calm-note">No follow-ups due today.</p>'}
+    ${oc.length ? `<section class="card"><div class="card-h"><h3>Today's calls by outcome</h3></div><div style="padding:12px 20px">${oc.map(x => `<div class="hb" style="--c:var(${x.o.c})"><span>${x.o.t}</span><div class="tr"><i style="width:${x.n/om*100}%"></i></div><b class="num">${x.n}</b></div>`).join('')}</div></section>` : ''}
+  </div></div>`;
+}
+''' + s[tb:]
 a = s.index('function briefHTML(co){'); b = s.index('function insightHTML(co){')
 s = s[:a] + r'''function briefHTML(co){
   const b = BR(co.key); if(!b) return '';
@@ -271,7 +331,3 @@ s = s[:a] + r'''function briefHTML(co){
 ''' + s[b:]
 # brief: calmer wording + no API panel unless asked
 s = s.replace('<div class="ih"><b>CALL BRIEF · ${esc(b[0].toUpperCase())}</b><button data-insight>Deeper AI research</button></div>', '<div class="ih"><b>CALL BRIEF</b><button data-insight>Deeper AI research</button></div>')
-
-# Today page: the main button is "Log call"
-assert s.count('>Start calling</button>') == 1
-s = s.replace('>Start calling</button>', '>Log call</button>')
