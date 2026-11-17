@@ -25,19 +25,22 @@ newkeys = [k for k in briefs if k not in oldco]
 missing = [k for k in newkeys if k not in set(df.ck)]
 assert not missing, missing
 nobrief = sorted(oldco - set(briefs)); assert not nobrief, nobrief
-added = []; dropped = []
+added = []; dropped = []; seen_new = set(); dupes_new = []
 n = 0
 for _, r in df[df.ck.isin(newkeys)].sort_values(['ck']).iterrows():
     n += 1
     c = {'id': 'n%03d' % n, 'f': cl(r['First Name']), 'l': cl(r['Last Name']), 't': cl(r['Title']), 'co': cl(r['Company Name for Emails']),
          'g': 'Defence' if r.ck in NEW_DEF else 'Aerospace', 'm': cl(r['Mobile Phone']), 'o': cl(r['Corporate Phone']), 'x': cl(r['Other Phone']),
          'e': cl(r['Email']), 'li': cl(r['Person Linkedin Url']), 'w': cl(r['Website']), 'nw': 1}
+    dk = (c['e'].lower() or (c['f'] + ' ' + c['l'] + '|' + c['co']).lower())
+    if dk in seen_new: dupes_new.append(c['f'] + ' ' + c['l']); continue
+    seen_new.add(dk)
     t = c['t'].lower()
     if re.search(r'\bhr\b|human resource|people|talent|recruit|finance|accounts?\b|legal|marketing|digital|data|website|\bit\b|software|cyber|brand|payroll|learning', t) and not re.search(r'logistic|supply|procure|purchas|buyer|material|stores|warehous|transport|shipping|freight|operation|production|facilit', t):
         dropped.append(c['t']); continue
     added.append({k: v for k, v in c.items() if v != ''})
 contacts = old + added
-print('dropped titles:', len(dropped), dropped[:12]); print(f'old contacts {len(old)} in {len(oldco)} companies; added {len(added)} contacts in {len(newkeys)} companies')
+print('duplicate rows skipped:', dupes_new); print('dropped titles:', len(dropped), dropped[:12]); print(f'old contacts {len(old)} in {len(oldco)} companies; added {len(added)} contacts in {len(newkeys)} companies')
 lines[idx] = 'const CONTACTS = ' + json.dumps(contacts, ensure_ascii=False, separators=(',', ':')) + ';\nconst BRIEFS = ' + json.dumps(briefs, ensure_ascii=False, separators=(',', ':')) + ';'
 s = '\n'.join(lines)
 
