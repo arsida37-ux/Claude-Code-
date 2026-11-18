@@ -7,7 +7,7 @@ let pass=0,fail=0;const ok=(n,c,i='')=>{c?pass++:fail++;console.log((c?'PASS ':'
 await p.goto('file:///home/user/Claude-Code-/crm/tracker/Defense-Call-Tracker.html#accounts');await p.waitForTimeout(500);
 await p.click('.alist .acc:has-text("Babcock")');await p.waitForTimeout(300);
 const top=async s=>p.$eval(s,e=>Math.round(e.getBoundingClientRect().top));
-ok('order: office, then call notes, then people',await p.evaluate(()=>{const f=document.querySelector('main.flow');const t=s=>f.querySelector(s).getBoundingClientRect().top;return t('.offbar')<t('.notes')&&t('.notes')<t('.pcs');}));
+ok('order: office, then people, then call notes',await p.evaluate(()=>{const f=document.querySelector('main.flow');const t=s=>f.querySelector(s).getBoundingClientRect().top;return t('.offbar')<t('.pcs')&&t('.pcs')<t('.notes');}));
 ok('form hidden until Log a call',!(await p.$('#saveBtn')));
 ok('Next company in header',(await tx('.chd-act')).includes('Next company'));
 // 1. call the office

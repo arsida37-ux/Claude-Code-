@@ -11,7 +11,7 @@ for(const [w,h] of [[1440,900],[1366,768],[1280,720],[1100,800],[390,844]]){
   await p.evaluate(()=>window.scrollTo(0,0));await p.waitForTimeout(300);const r=await p.evaluate(()=>{const flow=document.querySelector('.desk > main.flow'), side=document.querySelector('.desk > aside.side'), list=document.querySelector('.desk > aside.alist');
    const inFlow=['.chd','.offbar','.pcs','.notes'].map(s=>[s,!!(flow&&flow.querySelector(s))]);
    const inSide=['.guide.q','.guide.c','.fold[data-sec=obj]'].map(s=>[s,!!(side&&side.querySelector(s))]);
-   const order=['.chd','.offbar','.notes','.pcs'].map(s=>document.querySelector(s)?.getBoundingClientRect().top||0);
+   const order=['.chd','.offbar','.pcs','.notes'].map(s=>document.querySelector(s)?.getBoundingClientRect().top||0);
    const ordered=order.every((v,i)=>i===0||v>order[i-1]);
    const strays=[...document.querySelectorAll('#view > *')].map(e=>e.className);
    return {inFlow,inSide,ordered,strays,hasList:!!list,sw:document.documentElement.scrollWidth};});
