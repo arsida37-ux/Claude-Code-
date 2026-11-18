@@ -109,6 +109,7 @@ autocorrect = function(t){ if(!t) return t; const keep = []; let x = String(t);
   x = x.replace(/[A-Za-z']+/g, w => acIgnore.has(w.toLowerCase()) ? (keep.push(w), '\u0001' + (keep.length - 1) + '\u0002') : w);
   x = x.replace(/\b(i)ts (not|very|a|an|the|been|going|ok|fine|too|so|just|really|probably|possible|likely|worth|best|better|easier|hard|difficult|quite|all|always|never|only|still|now|already|urgent|expensive|cheap|cheaper|done|sorted|gone)\b/gi, (m, i, w) => (i === 'I' ? "It's " : "it's ") + w);
   x = _acBase(x);
+  x = x.replace(/\b(i)ts (not|very|a|an|the|been|going|ok|fine|too|so|just|really|probably|possible|likely|worth|best|better|easier|hard|difficult|quite|all|always|never|only|still|now|already|urgent|expensive|cheap|cheaper|done|sorted|gone)\b/gi, (m, i, w) => (i === 'I' ? "It's " : "it's ") + w);
   if(acNames.size) x = x.replace(/\b[a-z][a-z'-]+\b/g, w => acNames.has(w) ? w[0].toUpperCase() + w.slice(1) : w);
   return x.replace(/\u0001(\d+)\u0002/g, (m, i) => keep[+i]); };
 function endStop(t){ return t && /[A-Za-z0-9)]$/.test(t) ? t + '.' : t; }
@@ -201,5 +202,5 @@ s = s[:_end] + """
 .acfix:empty{display:none}
 .acfix button{border:0;background:none;color:#15803D;font:inherit;cursor:pointer;padding:0 2px;border-radius:4px}.acfix button:hover{background:#DCFCE7}
 .acfix s{color:#B91C1C}.acfix span{color:#A7F3D0}
-@media (max-width:900px){.ob-row{flex-wrap:wrap}.orow{grid-template-columns:22px 1fr auto}.orow .st,.orow .o-a .fb:not(.del){display:none}.pc-ph{display:none}}
+@media (max-width:900px){.ob-row{flex-wrap:wrap}.ob-t{flex:1 1 calc(100% - 40px)}.ob-a{flex:1 1 100%;justify-content:flex-start}.ob-n{font-size:21px}.orow{grid-template-columns:22px 1fr auto}.orow .st,.orow .o-a .fb:not(.del){display:none}.pc-ph{display:none}}
 """ + s[_end:]
