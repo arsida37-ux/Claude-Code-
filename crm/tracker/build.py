@@ -148,5 +148,7 @@ exec(open(__file__.rsplit('/',1)[0] + '/export_notes.py', encoding='utf-8').read
 exec(open(__file__.rsplit('/',1)[0] + '/sites.py', encoding='utf-8').read())
 exec(open(__file__.rsplit('/',1)[0] + '/office_first.py', encoding='utf-8').read())
 exec(open(__file__.rsplit('/',1)[0] + '/presites.py', encoding='utf-8').read())
+exec(open(__file__.rsplit('/',1)[0] + '/nav_delete.py', encoding='utf-8').read())
+exec(open(__file__.rsplit('/',1)[0] + '/site_loc.py', encoding='utf-8').read())
 open(OUT, 'w', encoding='utf-8').write(s)
 print('wrote', OUT, len(s), 'bytes')
