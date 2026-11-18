@@ -147,9 +147,8 @@ if _i >= 0:
 _end = s.rfind('</style>', 0, s.index('<script>'))
 s = s[:_end] + """
 /* option 4: pinned office bar + fold-out person cards */
-.offbar{position:sticky;top:70px;z-index:6;padding:14px 18px;border:1px solid #E4E4E7;box-shadow:0 6px 18px -12px rgba(0,0,0,.25)}
+.offbar{position:relative;padding:14px 18px;border:1px solid #E4E4E7;box-shadow:0 6px 18px -12px rgba(0,0,0,.25)}
 .offbar.on{border:2px solid #0A0A0C}
-.offbar:has(.ob-more[open]){position:relative;top:auto}
 .ob-row{display:flex;align-items:center;gap:14px}
 .ob-ic{font-size:18px}
 .ob-t{flex:1;min-width:0}
@@ -182,7 +181,7 @@ s = s[:_end] + """
 .pcs-h{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#71717A;margin:6px 2px 0}
 .pcs-h em{font-style:normal;background:#F1F1F3;border-radius:6px;padding:1px 7px;letter-spacing:0}
 .pcs-h .btn{margin-left:auto;text-transform:none;letter-spacing:0}
-.pkcard{padding:0;overflow:visible;scroll-margin-top:200px}
+.pkcard{padding:0;overflow:visible;scroll-margin-top:80px}
 .pkcard[data-person]{cursor:pointer}.pkcard[data-person]:hover{border-color:#D4D4D8}
 .pc-top{display:flex;align-items:center;gap:12px;padding:12px 16px}
 .pc-id{flex:1;min-width:0}.pc-id b{font-weight:500;font-size:15px;display:block}.pc-id small{color:#71717A;font-size:13px}
@@ -202,5 +201,5 @@ s = s[:_end] + """
 .acfix:empty{display:none}
 .acfix button{border:0;background:none;color:#15803D;font:inherit;cursor:pointer;padding:0 2px;border-radius:4px}.acfix button:hover{background:#DCFCE7}
 .acfix s{color:#B91C1C}.acfix span{color:#A7F3D0}
-@media (max-width:900px){.offbar{top:62px}.ob-row{flex-wrap:wrap}.orow{grid-template-columns:22px 1fr auto}.orow .st,.orow .o-a .fb:not(.del){display:none}.pc-ph{display:none}}
+@media (max-width:900px){.ob-row{flex-wrap:wrap}.orow{grid-template-columns:22px 1fr auto}.orow .st,.orow .o-a .fb:not(.del){display:none}.pc-ph{display:none}}
 """ + s[_end:]
