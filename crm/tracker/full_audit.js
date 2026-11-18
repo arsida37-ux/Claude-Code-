@@ -36,7 +36,7 @@ ok('stage moved to Attempting',await p.evaluate(()=>accts[curKey].stage==='Attem
 ok('top tally counts call',(await tx('#tally')).startsWith('1/'));
 // undo
 await c('[data-undo]');await p.waitForTimeout(200);ok('undo removes it',await p.evaluate(b=>(accts[curKey]?.log||[]).length===b,before));
-await c('.o[data-out="No Answer"]');await p.waitForTimeout(60);await c('#saveBtn');await p.waitForTimeout(200);
+ok('undo puts the call back in the form',await p.$eval('.o[data-out="No Answer"]',e=>e.getAttribute('aria-pressed')==='true'));await c('#saveBtn');await p.waitForTimeout(200);
 // ---------- person card ----------
 await c('.pkcard[data-person]');await p.waitForTimeout(250);
 const who=await tx('#pcOpen .pc-id b');ok('person card opens',!!who,who);
@@ -93,9 +93,9 @@ const share=await p.evaluate(()=>snapHTML({notes:true,hide:true}));ok('share pag
 await p.keyboard.press('Escape');
 // ---------- persistence + restore ----------
 await p.reload();await p.waitForTimeout(500);ok('data kept after reload',await p.evaluate(()=>Object.values(accts).some(a=>(a.log||[]).some(e=>e.note==='Edited note.'))));
-await p.goto('about:blank');await p.goto(URL);await p.evaluate(()=>{window.onbeforeunload=null;});await p.evaluate(()=>localStorage.clear());await p.goto('about:blank');await p.goto(URL+'#today');await p.waitForTimeout(500);ok('cleared browser starts empty',await p.evaluate(()=>!Object.values(accts).some(a=>(a.log||[]).length)));
-fs.writeFileSync(out+'/bk.json',bk);await tab('stats');await p.setInputFiles('#rs',out+'/bk.json');await p.waitForTimeout(500);
-ok('restore brings calls back',await p.evaluate(()=>Object.values(accts).some(a=>(a.log||[]).some(e=>e.note==='Edited note.'))));
+{const p2=await (await b.newContext()).newPage();await p2.goto(URL+'#stats');await p2.waitForTimeout(500);ok('new browser starts empty',await p2.evaluate(()=>!Object.values(accts).some(a=>(a.log||[]).length)));
+fs.writeFileSync(out+'/bk.json',bk);await p2.setInputFiles('#rs',out+'/bk.json');await p2.waitForTimeout(500);ok('restore on new browser brings calls back',await p2.evaluate(()=>Object.values(accts).some(a=>(a.log||[]).some(e=>e.note==='Edited note.'))));await p2.close();}
+
 // ---------- keyboard ----------
 await tab('accounts');await open('Babcock');await p.keyboard.press('Escape');await p.keyboard.press('1');await p.waitForTimeout(120);ok('key 1 picks No answer',await p.$eval('.o[data-out="No Answer"]',e=>e.getAttribute('aria-pressed')==='true'));
 await p.keyboard.press('Control+Enter');await p.waitForTimeout(250);ok('Ctrl+Enter saves',(await tx('.sv')).includes('Call saved'));
