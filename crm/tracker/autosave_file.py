@@ -23,10 +23,10 @@ function fsPill(){ let el = document.getElementById('fsPill'); const tally = doc
   if(!el){ el = document.createElement('div'); el.id = 'fsPill'; el.className = 'fsw'; tally.parentNode.insertBefore(el, tally); }
   const t = fsLast ? new Date(fsLast).toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'}) : '';
   const nm = fsHandle ? esc(fsHandle.name) : '';
-  const btn = fsState === 'none' ? '' : fsState === 'on' ? `<button class="fsb on" data-fs="menu" title="Saving every change to ${nm}">☁ Auto-saved${t ? ' ' + t : ''}</button>`
-    : fsState === 'paused' ? `<button class="fsb warn" data-fs="resume" title="Your browser needs you to allow saving again">☁ Click to resume auto-save</button>`
-    : fsState === 'error' ? `<button class="fsb bad" data-fs="resume">⚠ Auto-save stopped. Click to fix</button>`
-    : `<button class="fsb" data-fs="menu">☁ Turn on auto-save</button>`;
+  const btn = fsState === 'none' ? '' : fsState === 'on' ? `<button class="fsb on" data-fs="menu" title="Saving every change to ${nm}">☁ Saved${t ? ' ' + t : ''}</button>`
+    : fsState === 'paused' ? `<button class="fsb warn" data-fs="resume" title="Your browser needs you to allow saving again">☁ Resume auto-save</button>`
+    : fsState === 'error' ? `<button class="fsb bad" data-fs="resume">⚠ Auto-save stopped</button>`
+    : `<button class="fsb" data-fs="menu">☁ Auto-save</button>`;
   const menu = fsMenu ? `<div class="fsm"><b>Auto-save to OneDrive</b>
     <p>Every change is saved to one file. Put that file in your <b>OneDrive</b> folder and OneDrive keeps it safe.</p>
     ${fsState === 'on' ? `<p class="fsok">✓ Saving to <b>${nm}</b>${t ? ' · last saved ' + t : ''}</p><div class="fsr"><button class="btn sm" data-fs="new">Use a different file</button><button class="btn sm ghost" data-fs="stop">Turn off</button></div>`
@@ -45,6 +45,9 @@ _end = s.rfind('</style>', 0, s.index('<script>'))
 s = s[:_end] + """
 /* auto-save pill */
 .fsw{position:relative;margin-left:auto;margin-right:14px}
+@media (max-width:1680px){.top{gap:16px}.top .qs kbd{display:none}.top .qs{min-width:0}.fsw{margin-right:6px}}
+@media (max-width:1560px){.top .qs{font-size:0;gap:0;padding:8px 10px;min-width:0;width:auto}.top .qs svg{width:17px;height:17px}}
+@media (max-width:1366px){.top .tabs button{padding-left:8px;padding-right:8px}.top{gap:12px}}
 .fsb{font:inherit;font-size:12.5px;border:1px solid #E4E4E7;background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;color:#3F3F46;white-space:nowrap}
 .fsb.on{background:#F0FDF4;border-color:#BBF7D0;color:#166534}
 .fsb.warn{background:#FFFBEB;border-color:#FDE68A;color:#92400E}

@@ -100,7 +100,7 @@ fs.writeFileSync(out+'/bk.json',bk);await p2.setInputFiles('#rs',out+'/bk.json')
 await tab('accounts');await open('Babcock');await p.keyboard.press('Escape');await p.keyboard.press('1');await p.waitForTimeout(120);ok('key 1 picks No answer',await p.$eval('.o[data-out="No Answer"]',e=>e.getAttribute('aria-pressed')==='true'));
 await p.keyboard.press('Control+Enter');await p.waitForTimeout(250);ok('Ctrl+Enter saves',(await tx('.sv')).includes('Call saved'));
 // ---------- auto-save button ----------
-ok('auto-save button in top bar',(await tx('#fsPill')).includes('auto-save'));
+ok('auto-save button in top bar',(await tx('#fsPill')).toLowerCase().includes('auto-save'));
 // ---------- mobile ----------
 await p.setViewportSize({width:390,height:844});await p.waitForTimeout(300);ok('phone width: no sideways scroll',await p.evaluate(()=>document.documentElement.scrollWidth<=392),await p.evaluate(()=>document.documentElement.scrollWidth));
 await p.screenshot({path:out+'/audit-phone.png'});
