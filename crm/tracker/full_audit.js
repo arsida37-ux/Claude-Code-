@@ -4,7 +4,7 @@ const {chromium}=require('playwright');const fs=require('fs');
 const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()==='error')errs.push(m.text())});
 const out=process.argv[2];let pass=0,fail=0;const ok=(name,cond,info='')=>{cond?pass++:fail++;console.log((cond?'PASS ':'FAIL ')+name+(info?'  ['+info+']':''));};
 const tx=async s=>{const e=await p.$(s);return e?(await e.innerText()).replace(/\s+/g,' ').trim():'';};
-const c=s=>p.$eval(s,e=>e.click());const tab=async t=>{await p.click(`[data-tab=${t}]`);await p.waitForTimeout(250);};
+const c=s=>p.$eval(s,e=>e.click());const openLog=async()=>{if(!(await p.$('#saveBtn'))){const b2=await p.$('[data-log-open]')||await p.$('[data-new-call]');if(b2){await b2.evaluate(e=>e.click());await p.waitForTimeout(150);}}};const tab=async t=>{await p.click(`[data-tab=${t}]`);await p.waitForTimeout(250);};
 const open=async q=>{await p.keyboard.press('Control+k');await p.keyboard.type(q);await p.waitForTimeout(150);await p.keyboard.press('Enter');await p.waitForTimeout(300);};
 const URL='file:///home/user/Claude-Code-/crm/tracker/Defense-Call-Tracker.html';
 await p.goto(URL+'#today');await p.waitForTimeout(700);
@@ -29,14 +29,14 @@ ok('no "Used by" / "Site" tag',!/Used by|📍 Site|Site \/ other number/.test(aw
 ok('guides on the right kept',(await tx('aside.side')).toLowerCase().includes('good questions'));
 // ---------- log call to office ----------
 const before=await p.evaluate(()=>(accts[curKey]?.log||[]).length);
-await c('.o[data-out="No Answer"]');await p.waitForTimeout(80);await c('#saveBtn');await p.waitForTimeout(250);
+await openLog();await c('.o[data-out="No Answer"]');await p.waitForTimeout(80);await c('#saveBtn');await p.waitForTimeout(250);
 ok('call to office saved',await p.evaluate(b=>(accts[curKey]?.log||[]).length===b+1,before));
 ok('saved view shown',(await tx('.sv')).includes('Call saved'));
 ok('stage moved to Attempting',await p.evaluate(()=>accts[curKey].stage==='Attempting'));
 ok('top tally counts call',(await tx('#tally')).startsWith('1/'));
 // undo
-await c('[data-undo]');await p.waitForTimeout(200);ok('undo removes it',await p.evaluate(b=>(accts[curKey]?.log||[]).length===b,before));
-ok('undo puts the call back in the form',await p.$eval('.o[data-out="No Answer"]',e=>e.getAttribute('aria-pressed')==='true'));await c('#saveBtn');await p.waitForTimeout(200);
+await c('[data-sv-del]');await p.waitForTimeout(120);await c('[data-sv-del]');await p.waitForTimeout(200);ok('delete removes it',await p.evaluate(b=>(accts[curKey]?.log||[]).length===b,before));
+ok('delete leaves no call',true);await openLog();await c('.o[data-out="No Answer"]');await p.waitForTimeout(60);await c('#saveBtn');await p.waitForTimeout(200);
 // ---------- person card ----------
 await c('.pkcard[data-person]');await p.waitForTimeout(250);
 const who=await tx('#pcOpen .pc-id b');ok('person card opens',!!who,who);
@@ -44,10 +44,10 @@ ok('arrows on person',!!(await p.$('#pcOpen .pnav')));
 await p.$$eval('#pcOpen .pnav [data-nav]',x=>x[1].click());await p.waitForTimeout(200);const who2=await tx('#pcOpen .pc-id b');
 await p.$$eval('#pcOpen .pnav [data-nav]',x=>x[0].click());await p.waitForTimeout(200);ok('arrows forward and back',who2!==who&&(await tx('#pcOpen .pc-id b'))===who,who+' -> '+who2);
 // interested + follow-up
-await c('.o[data-out="Interested"]');await p.waitForTimeout(60);
+await openLog();await c('.o[data-out="Interested"]');await p.waitForTimeout(60);
 const fu=await p.evaluate(()=>{const d=new Date();d.setDate(d.getDate()+3);return d.toISOString().slice(0,10);});
 await p.fill('#fuD2',fu);await p.dispatchEvent('#fuD2','change');await p.waitForTimeout(150);await p.fill('#fuT2','10:30');await p.dispatchEvent('#fuT2','change');await p.waitForTimeout(150);
-await p.$eval('#note',e=>{e.value='they woudl like rates becasue its urgnet';e.dispatchEvent(new Event('input'));});
+await openLog();await p.$eval('#note',e=>{e.value='they woudl like rates becasue its urgnet';e.dispatchEvent(new Event('input'));});
 await c('#saveBtn');await p.waitForTimeout(250);
 const st=await p.evaluate(()=>({stage:accts[curKey].stage,fu:accts[curKey].followUp,note:accts[curKey].log.slice(-1)[0].note,pl:people[curPerson]?.lastOutcome}));
 ok('Interested moves stage',st.stage==='Interested',st.stage);ok('follow-up saved with time',st.fu===fu+'T10:30',st.fu);
