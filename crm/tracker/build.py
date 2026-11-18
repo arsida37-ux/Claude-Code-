@@ -155,5 +155,6 @@ exec(open(__file__.rsplit('/',1)[0] + '/autosave_file.py', encoding='utf-8').rea
 exec(open(__file__.rsplit('/',1)[0] + '/spell.py', encoding='utf-8').read())
 exec(open(__file__.rsplit('/',1)[0] + '/log_toggle.py', encoding='utf-8').read())
 exec(open(__file__.rsplit('/',1)[0] + '/flow.py', encoding='utf-8').read())
+exec(open(__file__.rsplit('/',1)[0] + '/counts.py', encoding='utf-8').read())
 open(OUT, 'w', encoding='utf-8').write(s)
 print('wrote', OUT, len(s), 'bytes')
