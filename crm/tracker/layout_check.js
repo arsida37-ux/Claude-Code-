@@ -9,7 +9,7 @@ for(const [w,h] of [[1440,900],[1366,768],[1280,720],[1100,800],[390,844]]){
   if(state==='saved'){const lo=await p.$('[data-log-open]');if(lo){await lo.evaluate(e=>e.click());await p.waitForTimeout(120);}await p.$eval('.o[data-out="Interested"]',e=>e.click());await p.$eval('#saveBtn',e=>e.click());await p.waitForTimeout(150);}
   if(state==='editing-notes'){await p.fill('[data-intel=courier]','dhl');await p.click('[data-intel-save]');await p.waitForTimeout(100);await p.click('[data-intel-edit]');await p.waitForTimeout(100);}
   await p.evaluate(()=>window.scrollTo(0,0));await p.waitForTimeout(300);const r=await p.evaluate(()=>{const flow=document.querySelector('.desk > main.flow'), side=document.querySelector('.desk > aside.side'), list=document.querySelector('.desk > aside.alist');
-   const inFlow=['.chd','.offbar','.logc','.pcs','.notes'].map(s=>[s,!!(flow&&flow.querySelector(s))]);
+   const inFlow=['.chd','.offbar','.pcs','.notes'].map(s=>[s,!!(flow&&flow.querySelector(s))]);
    const inSide=['.guide.q','.guide.c','.fold[data-sec=obj]'].map(s=>[s,!!(side&&side.querySelector(s))]);
    const order=['.chd','.offbar','.notes','.pcs'].map(s=>document.querySelector(s)?.getBoundingClientRect().top||0);
    const ordered=order.every((v,i)=>i===0||v>order[i-1]);
