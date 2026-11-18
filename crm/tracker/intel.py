@@ -1,7 +1,7 @@
 # Account notes: Save button, then shown as plain info with Edit. Monthly spend removed everywhere.
 rep(",['value','Est. monthly spend (£)','e.g. 1500']];", "];")
 a_ = s.index('<div class="intel">${INTEL.map(([k, l, phd])')
-b_ = s.index("</div></div></details>", a_)
+b_ = s.index("</div></div></details>", a_) + len("</div>")   # keep the closing tags of the About box
 s = s[:a_] + r"""${(() => { const iv = a.intel || {}, has = INTEL.some(([k]) => iv[k]); if(intelEditKey !== co.key && has) return `<div class="intel-v"><dl>${INTEL.filter(([k]) => iv[k]).map(([k, l]) => `<div><dt>${l}</dt><dd>${esc(iv[k])}</dd></div>`).join('')}</dl><button class="btn sm" data-intel-edit>Edit notes</button></div>`;
   const dv = intelEditKey === co.key ? intelDraft : iv; return `<div class="intel-e"><div class="intel">${INTEL.map(([k, l, phd]) => `<label><span>${l}</span><input type="text" data-intel="${k}" placeholder="${esc(phd)}" value="${esc(dv[k] || '')}"></label>`).join('')}</div><div class="intel-a"><button class="btn sm p" data-intel-save>Save notes</button>${has ? '<button class="btn sm ghost" data-intel-cancel>Cancel</button>' : ''}</div></div>`; })()}""" + s[b_:]
 rep("let addNoteIdx = null,", "let intelEditKey = null, intelDraft = {}, addNoteIdx = null,")
@@ -23,3 +23,4 @@ s = s[:_end] + """
 .intel-a{display:flex;gap:8px;margin-top:12px}
 @media (max-width:700px){.intel-v dl{grid-template-columns:minmax(0,1fr)}}
 """ + s[_end:]
+rep("""const info = [esc(co.g), esc(segOf(co)), `<b>${co.ppl.length}</b> contacts`,""", """const info = [esc(co.g), esc(segOf(co)), `<b>${co.ppl.length}</b> ${co.ppl.length === 1 ? 'contact' : 'contacts'}`,""")
